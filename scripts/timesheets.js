@@ -95,16 +95,20 @@ loadTimesheets = function (exports) {
     if(this.date) {
       var dateObj = new Date(this.date[0], this.date[1]-1, this.date[2]);
       var data = this.storage.get(username, dateObj);
-      // if hasnt done お疲れ yet, dont touch workedHours, else change workedHours
-      if(!data.signOut) {
-        this.storage.set(username, dateObj, {kyuukei: '0'});
+      // if signin on the date is not blank or - then proceed with registering nakanuke
+      if (data.signIn && data.signIn != '-') {
+        // if hasnt done お疲れ yet, dont touch workedHours, else change workedHours
+        if (!data.signOut) {
+          this.storage.set(username, dateObj, {kyuukei: '0'});
+        }
+        else {
+          var workedHours = data.signOut - data.signIn;
+          workedHours = workedHours / 1000 / 60 / 60;
+          this.storage.set(username, dateObj, {kyuukei: '0', workedHours: rounder(workedHours)});
+        }
+        var responseDate = this.date[0]+"/"+this.date[1]+"/"+this.date[2];
+      this.responder.template("休憩なし", username, responseDate);
       }
-      else {
-        var workedHours = data.signOut - data.signIn;
-        workedHours = workedHours/ 1000 / 60 / 60;
-        this.storage.set(username, dateObj, {kyuukei: '0', workedHours: rounder(workedHours)});
-      }
-      this.responder.template("休憩なし", username);
     }
   };
 

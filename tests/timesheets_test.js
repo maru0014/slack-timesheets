@@ -273,27 +273,21 @@ QUnit.test( "Timesheets", function(assert) {
   });
 
   // なかぬけ
-  var test1 = {}, test2 = {}, test3 = {};
+  var test1 = {}, test2 = {};
   test1[nowDateStr()] = { user: 'test1', signIn: new Date(2014,0,2,0,0,0), signOut: new Date(2014,0,2,12,0,0) };
-  test2[nowDateStr()] = { user: 'test2', signIn: new Date(2014,0,2,0,0,0) };
-  test3[nowDateStr()] = { user: 'test3' };
-  storageTest({'test1': test1, 'test2':test2, 'test3':test3}, function(msgTest) {
-    msgTest('test1', '今日は2時間なかぬけでした', [['なかぬけ', 'test1', "2"]]);
-    msgTest('test1', '昨日は2時間なかぬけでした', [['なかぬけ', 'test1', "2"]]);
-    msgTest('test2', '今日は2時間なかぬけでした', [['なかぬけ', 'test2', "2"]]);
-    msgTest('test3', '今日は2時間なかぬけでした', [['なかぬけ', 'test3', "2"]]);
+  test2[nowDateStr()] = { user: 'test2', signIn: '-', signOut: '-'};
+  storageTest({'test1': test1, 'test2':test2}, function(msgTest) {
+    msgTest('test1', '今日は2時間なかぬけでした', [['なかぬけ', 'test1', '2014/01/02', "2"]]);
+    msgTest('test2', '昨日は2時間なかぬけでした', []);
   });
 
   // 休憩なし
   var test1 = {}, test2 = {}, test3 = {};
   test1[nowDateStr()] = { user: 'test1', signIn: new Date(2014,0,2,0,0,0), signOut: new Date(2014,0,2,12,0,0) };
-  test2[nowDateStr()] = { user: 'test2', signIn: new Date(2014,0,2,0,0,0) };
-  test3[nowDateStr()] = { user: 'test3' };
-  storageTest({'test1': test1, 'test2':test2, 'test3':test3}, function(msgTest) {
-    msgTest('test1', '今日は休憩なしでした', [['休憩なし', 'test1']]);
-    msgTest('test1', '昨日は休憩なしでした', [['休憩なし', 'test1']]);
-    msgTest('test2', '今日は休憩なしでした', [['休憩なし', 'test2']]);
-    msgTest('test3', '今日は休憩なしでした', [['休憩なし', 'test3']]);
+  test2[nowDateStr()] = { user: 'test2', signIn: '-', signOut: '-'};
+  storageTest({'test1': test1, 'test2':test2}, function(msgTest) {
+    msgTest('test1', '今日は休憩なしでした', [['休憩なし', 'test1', '2014/1/2']]);
+    msgTest('test2', '昨日は休憩なしでした', []);
   });
 
 
