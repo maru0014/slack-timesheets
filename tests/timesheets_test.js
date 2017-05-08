@@ -286,7 +286,7 @@ QUnit.test( "Timesheets", function(assert) {
   test1[nowDateStr()] = { user: 'test1', signIn: new Date(2014,0,2,0,0,0), signOut: new Date(2014,0,2,12,0,0) };
   test2[nowDateStr()] = { user: 'test2', signIn: '-', signOut: '-'};
   storageTest({'test1': test1, 'test2':test2}, function(msgTest) {
-    msgTest('test1', '今日は休憩なしでした', [['休憩なし', 'test1', '2014/1/2']]);
+    msgTest('test1', '今日は休憩なしでした', [['休憩なし', 'test1', '2014/01/02']]);
     msgTest('test2', '昨日は休憩なしでした', []);
   });
 
