@@ -113,40 +113,48 @@ loadGSTimesheets = function () {
   };
 
   // １ヶ月分の集計
-  GSTimesheets.prototype.getRawValue = function (username, month, year) {
+  GSTimesheets.prototype.getMonthTotal = function (username, month, year) {
     var matomeSheet = this._getSheet(username);
     var lastRow = matomeSheet.getLastRow();
     var matomeRange = "B5:B" + lastRow;
     var matomeData = matomeSheet.getRange(matomeRange).getValues();
     var firstDay = null;
-    var lastDay = null;
+    var lastDay = 0;
 
     var actualMonth = month+1;
     var helperStringInit = username+"さんが"+year+"年"+actualMonth+"月には";
     var helperStringFin = "時間働きました";
 
     for (var i = 0; i < matomeData.length; i++) {
-      if (matomeData[i][0].getMonth() == month && matomeData[i][0].getYear() == year) {
-        firstDay = i+5;
-        break;
+      if (matomeData[i][0]){
+        if (matomeData[i][0].getMonth() == month && matomeData[i][0].getYear() == year) {
+          firstDay = i + 5;
+          break;
+        }
       }
     }
     for (var j = matomeData.length-1; j >= 0; j--) {
-      if (matomeData[j][0].getMonth() == month && matomeData[j][0].getYear() == year) {
-        lastDay = j+5;
-        break;
+      if (matomeData[j][0]) {
+        if (matomeData[j][0].getMonth() == month && matomeData[j][0].getYear() == year) {
+          lastDay = j + 5;
+          break;
+        }
       }
     }
+
     if (firstDay != null && lastDay != null) {
       var hoursData = 0;
       for (var n = firstDay; n <= lastDay; n++) {
-        hoursData += matomeSheet.getRange("F"+n).getValue();
+        if (matomeSheet.getRange("F"+n).getValue()) {
+          hoursData += parseFloat(matomeSheet.getRange("F"+n).getValue());
+        }
       }
       return helperStringInit+hoursData+helperStringFin;
     }
     else {
       return helperStringInit+"出勤しませんでした";
     }
+
   };
 
   return GSTimesheets;

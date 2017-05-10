@@ -52,23 +52,23 @@ loadTimesheets = function (exports) {
     }
   };
 
-  // // calculatemonthtotal -- TODO 一ヶ月の計算
-  // Timesheets.prototype.actionMonthTotal = function(username, message) {
-  //   var userReg = /:([^\s]+)/;
-  //   var user = userReg.exec(message);
-  //   user = user[1];
-  //
-  //   var yearReg = /\d+(?=\/)/;
-  //   var year = yearReg.exec(message);
-  //   year = year[0];
-  //
-  //   var monthReg = /\d+$/;
-  //   var month = monthReg.exec(message);
-  //   month = month[0]-1;
-  //
-  //   var calculateMonth = this.storage.getRawValue(user, month, year);
-  //   this.responder.send(calculateMonth);
-  // };
+  // calculatemonthtotal -- TODO 一ヶ月の計算
+  Timesheets.prototype.actionMonthTotal = function(username, message) {
+    var userReg = /:([^\s]+)/;
+    var user = userReg.exec(message);
+    user = user[1];
+
+    var yearReg = /\d+(?=\/)/;
+    var year = yearReg.exec(message);
+    year = year[0];
+
+    var monthReg = /\d+$/;
+    var month = monthReg.exec(message);
+    month = month[0]-1;
+
+    var calculateMonth = this.storage.getMonthTotal(user, month, year);
+    this.responder.send(calculateMonth);
+  };
 
 
   // help
@@ -98,7 +98,11 @@ loadTimesheets = function (exports) {
         "\n\n" +
         "誰がやすみ 〜 休みのユーザーを表示" +
         "\n\n" +
-        "◯は何時間働きましたか 〜 ◯に働いた時間と休憩時間を表示"
+        "◯は何時間働きましたか 〜 ◯に働いた時間と休憩時間を表示" +
+        "\n\n" +
+        "集計 :username year/month 〜 usernameのユーザーのyear年month月に働いた就業時間を表" +
+        "\n" +
+        "(例: 集計 :n.rashidov 2017/4)"
     );
   };
 
