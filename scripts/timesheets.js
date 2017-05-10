@@ -36,7 +36,9 @@ loadTimesheets = function (exports) {
       ['actionNakanuke', /(なかぬけ)/],
       ['actionMonthTotal', /(集計)/],
       ['confirmSignIn', /__confirmSignIn__/],
-      ['confirmSignOut', /__confirmSignOut__/]
+      ['confirmSignOut', /__confirmSignOut__/],
+      ['actionDayTotal', /(何時間働)/],
+      ['actionHelp', /(help)/]
     ];
 
     // メッセージを元にメソッドを探す
@@ -50,22 +52,63 @@ loadTimesheets = function (exports) {
     }
   };
 
-  // calculatemonthtotal
-  Timesheets.prototype.actionMonthTotal = function(username, message) {
-    var userReg = /:([^\s]+)/;
-    var user = userReg.exec(message);
-    user = user[1];
+  // // calculatemonthtotal -- TODO 一ヶ月の計算
+  // Timesheets.prototype.actionMonthTotal = function(username, message) {
+  //   var userReg = /:([^\s]+)/;
+  //   var user = userReg.exec(message);
+  //   user = user[1];
+  //
+  //   var yearReg = /\d+(?=\/)/;
+  //   var year = yearReg.exec(message);
+  //   year = year[0];
+  //
+  //   var monthReg = /\d+$/;
+  //   var month = monthReg.exec(message);
+  //   month = month[0]-1;
+  //
+  //   var calculateMonth = this.storage.getRawValue(user, month, year);
+  //   this.responder.send(calculateMonth);
+  // };
 
-    var yearReg = /\d+(?=\/)/;
-    var year = yearReg.exec(message);
-    year = year[0];
 
-    var monthReg = /\d+$/;
-    var month = monthReg.exec(message);
-    month = month[0]-1;
+  // help
+  Timesheets.prototype.actionHelp = function(username, message) {
+    this.responder.send(
+        "timesheetsの使い方：" +
+        "\n\n" +
+        "おはようございます 〜 今の時間で出勤登録" +
+        "\n\n" +
+        "おはようございます 10:00 〜 10時に出勤登録" +
+        "\n\n" +
+        "お疲れ様でした 〜 今の時間で退勤登録" +
+        "\n\n" +
+        "◯は△時間なかぬけでした 〜 ◯の休憩△時間追加" +
+        "\n\n" +
+        "◯は休憩なしでした 〜 ◯の休憩を0時間に更新。注意：このコマンド打たないと休憩1時間を登録させます" +
+        "\n\n" +
+        "◯は△時に出勤しました 〜 ◯日付△時間に出勤登録" +
+        "\n\n" +
+        "◯は△時に退勤しました 〜 ◯日付△時間に退勤登録" +
+        "\n\n" +
+        "◯はやすみです 〜 ◯日付の列に'ー'付ける" +
+        "\n\n" +
+        "◯はやすみキャンセル 〜 ◯日付の列から'ー'を削除" +
+        "\n\n" +
+        "誰が出勤してますか 〜 出勤中のユーザーを表示" +
+        "\n\n" +
+        "誰がやすみ 〜 休みのユーザーを表示" +
+        "\n\n" +
+        "◯は何時間働きましたか 〜 ◯に働いた時間と休憩時間を表示"
+    );
+  };
 
-    var calculateMonth = this.storage.getRawValue(user, month, year);
-    this.responder.send(calculateMonth);
+  // 合計時間
+  Timesheets.prototype.actionDayTotal = function(username, message) {
+    if(this.date) {
+      var dateObj = new Date(this.date[0], this.date[1]-1, this.date[2]);
+      var data = this.storage.get(username, dateObj);
+      this.responder.template("合計時間", username, DateUtils.format("Y/m/d", dateObj), data.kyuukei, data.workedHours);
+    }
   };
 
   // なかぬけ
@@ -85,7 +128,7 @@ loadTimesheets = function (exports) {
           workedHours = workedHours/ 1000 / 60 / 60;
           this.storage.set(username, dateObj, {kyuukei: nakanukeTime, workedHours: rounder(workedHours)-nakanukeTime});
         }
-      this.responder.template("なかぬけ", username, this.dateStr, nakanukeTime);
+        this.responder.template("なかぬけ", username, this.dateStr, nakanukeTime);
       }
     }
   };
@@ -106,8 +149,7 @@ loadTimesheets = function (exports) {
           workedHours = workedHours / 1000 / 60 / 60;
           this.storage.set(username, dateObj, {kyuukei: '0', workedHours: rounder(workedHours)});
         }
-        var responseDate = this.date[0]+"/"+this.date[1]+"/"+this.date[2];
-      this.responder.template("休憩なし", username, responseDate);
+      this.responder.template("休憩なし", username, DateUtils.format("Y/m/d", dateObj));
       }
     }
   };
@@ -134,8 +176,9 @@ loadTimesheets = function (exports) {
   Timesheets.prototype.actionSignOut = function(username, message) {
     if(this.datetime) {
       var data = this.storage.get(username, this.datetime);
+      var workedHours;
       if(!data.signOut || data.signOut === '-') {
-        var workedHours = Math.abs(this.datetime - data.signIn);
+        workedHours = Math.abs(this.datetime - data.signIn);
         workedHours = workedHours/ 1000 / 60 / 60;
         this.storage.set(username, this.datetime, { signOut: this.datetime, workedHours: rounder(workedHours) - data.kyuukei });
         this.responder.template("退勤", username, this.datetimeStr);
@@ -143,7 +186,9 @@ loadTimesheets = function (exports) {
       else {
         // 更新の場合は時間を明示する必要がある
         if(!!this.time) {
-          this.storage.set(username, this.datetime, {signOut: this.datetime});
+          workedHours = Math.abs(this.datetime - data.signIn);
+          workedHours = workedHours/ 1000 / 60 / 60;
+          this.storage.set(username, this.datetime, {signOut: this.datetime, workedHours: rounder(workedHours) - data.kyuukei});
           this.responder.template("退勤更新", username, this.datetimeStr);
         }
       }
@@ -215,45 +260,45 @@ loadTimesheets = function (exports) {
     }
   };
 
-  // 出勤していない人にメッセージを送る
-  Timesheets.prototype.confirmSignIn = function(username, message) {
-    var self = this;
-    var holidays = _.compact(_.map((this.settings.get("休日") || "").split(','), function(s) {
-      var date = DateUtils.parseDateTime(s);
-      return date ? DateUtils.format("Y/m/d", date) : undefined;
-    }));
-    var today = DateUtils.toDate(DateUtils.now());
+  // // 出勤していない人にメッセージを送る
+  // Timesheets.prototype.confirmSignIn = function(username, message) {
+  //   var self = this;
+  //   var holidays = _.compact(_.map((this.settings.get("休日") || "").split(','), function(s) {
+  //     var date = DateUtils.parseDateTime(s);
+  //     return date ? DateUtils.format("Y/m/d", date) : undefined;
+  //   }));
+  //   var today = DateUtils.toDate(DateUtils.now());
+  //
+  //   // 休日ならチェックしない
+  //   if(_.contains(holidays, DateUtils.format("Y/m/d",today))) return;
+  //
+  //   var wday = DateUtils.now().getDay();
+  //   var signedInUsers = _.compact(_.map(this.storage.getByDate(today), function(row) {
+  //     var signedIn = _.isDate(row.signIn);
+  //     var off = (row.signIn === '-') || _.contains(self.storage.getDayOff(row.user), wday);
+  //     return (signedIn || off) ? row.user : undefined;
+  //   }));
+  //   var users = _.difference(this.storage.getUsers(), signedInUsers);
+  //
+  //   if(!_.isEmpty(users)) {
+  //     this.responder.template("出勤確認", users.sort());
+  //   }
+  //
+  //   // バージョンチェックを行う
+  //   if(typeof checkUpdate == 'function') checkUpdate(this.responder);
+  // };
 
-    // 休日ならチェックしない
-    if(_.contains(holidays, DateUtils.format("Y/m/d",today))) return;
-
-    var wday = DateUtils.now().getDay();
-    var signedInUsers = _.compact(_.map(this.storage.getByDate(today), function(row) {
-      var signedIn = _.isDate(row.signIn);
-      var off = (row.signIn === '-') || _.contains(self.storage.getDayOff(row.user), wday);
-      return (signedIn || off) ? row.user : undefined;
-    }));
-    var users = _.difference(this.storage.getUsers(), signedInUsers);
-
-    if(!_.isEmpty(users)) {
-      this.responder.template("出勤確認", users.sort());
-    }
-
-    // バージョンチェックを行う
-    if(typeof checkUpdate == 'function') checkUpdate(this.responder);
-  };
-
-  // 退勤していない人にメッセージを送る
-  Timesheets.prototype.confirmSignOut = function(username, message) {
-    var dateObj = DateUtils.toDate(DateUtils.now());
-    var users = _.compact(_.map(this.storage.getByDate(dateObj), function(row) {
-      return _.isDate(row.signIn) && !_.isDate(row.signOut) ? row.user : undefined;
-    }));
-
-    if(!_.isEmpty(users)) {
-      this.responder.template("退勤確認", users.sort());
-    }
-  };
+  // // 退勤していない人にメッセージを送る
+  // Timesheets.prototype.confirmSignOut = function(username, message) {
+  //   var dateObj = DateUtils.toDate(DateUtils.now());
+  //   var users = _.compact(_.map(this.storage.getByDate(dateObj), function(row) {
+  //     return _.isDate(row.signIn) && !_.isDate(row.signOut) ? row.user : undefined;
+  //   }));
+  //
+  //   if(!_.isEmpty(users)) {
+  //     this.responder.template("退勤確認", users.sort());
+  //   }
+  // };
 
   return Timesheets;
 };
