@@ -33,7 +33,7 @@ loadTimesheets = function (exports) {
       ['actionOff', /(やす(ま|み|む)|休暇)/],
       ['actionSignIn', /(モ[ー〜]+ニン|も[ー〜]+にん|おっは|おは|へろ|はろ|ヘロ|ハロ|出勤)/],
       ['actionNoKyuukei', /(休憩なし)/],
-      ['actionNakanuke', /(なかぬけ)/],
+      ['actionNakanuke', /(なかぬけ|休憩)/],
       ['actionMonthTotal', /(集計)/],
       ['confirmSignIn', /__confirmSignIn__/],
       ['confirmSignOut', /__confirmSignOut__/],
@@ -80,15 +80,17 @@ loadTimesheets = function (exports) {
         "\n\n" +
         "おはようございます 10:00 〜 10時に出勤登録" +
         "\n\n" +
+        "5/4は11:30に出勤しました 〜 5月4日の出勤時間を11:30で登録" +
+        "\n\n" +
         "お疲れ様でした 〜 今の時間で退勤登録" +
+        "\n\n" +
+        "5/4は18:30に退勤しました 〜 5月4日の退勤時間を11:30で登録" +
         "\n\n" +
         "◯は△時間なかぬけでした 〜 ◯の休憩△時間追加" +
         "\n\n" +
-        "◯は休憩なしでした 〜 ◯の休憩を0時間に更新。注意：このコマンド打たないと休憩1時間を登録させます" +
+        "今日は休憩なしでした 〜 今日の休憩を0時間に更新。注意：このコマンド打たないと休憩1時間を登録させます" +
         "\n\n" +
-        "◯は△時に出勤しました 〜 ◯日付△時間に出勤登録" +
-        "\n\n" +
-        "◯は△時に退勤しました 〜 ◯日付△時間に退勤登録" +
+        "今日は休憩1時間 〜 今日の休憩を1時間に更新。" +
         "\n\n" +
         "◯はやすみです 〜 ◯日付の列に'ー'付ける" +
         "\n\n" +
@@ -111,7 +113,11 @@ loadTimesheets = function (exports) {
     if(this.date) {
       var dateObj = new Date(this.date[0], this.date[1]-1, this.date[2]);
       var data = this.storage.get(username, dateObj);
-      this.responder.template("合計時間", username, DateUtils.format("Y/m/d", dateObj), data.kyuukei, data.workedHours);
+      if (data.signIn && data.signOut && data.workedHours) {
+        this.responder.template("合計時間", username, DateUtils.format("Y/m/d", dateObj), data.kyuukei, data.workedHours, DateUtils.format("H:M", data.signIn), DateUtils.format("H:M", data.signOut));
+      } else {
+        this.responder.send("まだ退勤してませんよ");
+      }
     }
   };
 
@@ -133,6 +139,7 @@ loadTimesheets = function (exports) {
           this.storage.set(username, dateObj, {kyuukei: nakanukeTime, workedHours: rounder(workedHours)-nakanukeTime});
         }
         this.responder.template("なかぬけ", username, this.dateStr, nakanukeTime);
+        this.actionDayTotal(username, message);
       }
     }
   };
@@ -153,7 +160,8 @@ loadTimesheets = function (exports) {
           workedHours = workedHours / 1000 / 60 / 60;
           this.storage.set(username, dateObj, {kyuukei: '0', workedHours: rounder(workedHours)});
         }
-      this.responder.template("休憩なし", username, DateUtils.format("Y/m/d", dateObj));
+        this.responder.template("休憩なし", username, DateUtils.format("Y/m/d", dateObj));
+        this.actionDayTotal(username, message);
       }
     }
   };
@@ -186,6 +194,7 @@ loadTimesheets = function (exports) {
         workedHours = workedHours/ 1000 / 60 / 60;
         this.storage.set(username, this.datetime, { signOut: this.datetime, workedHours: rounder(workedHours) - data.kyuukei });
         this.responder.template("退勤", username, this.datetimeStr);
+        this.actionDayTotal(username, message);
       }
       else {
         // 更新の場合は時間を明示する必要がある
@@ -194,6 +203,7 @@ loadTimesheets = function (exports) {
           workedHours = workedHours/ 1000 / 60 / 60;
           this.storage.set(username, this.datetime, {signOut: this.datetime, workedHours: rounder(workedHours) - data.kyuukei});
           this.responder.template("退勤更新", username, this.datetimeStr);
+          this.actionDayTotal(username, message);
         }
       }
     }
