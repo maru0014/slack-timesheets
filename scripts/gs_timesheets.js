@@ -116,13 +116,13 @@ loadGSTimesheets = function () {
   GSTimesheets.prototype.getMonthTotal = function (username, month, year) {
     var matomeSheet = this._getSheet(username);
     var lastRow = matomeSheet.getLastRow();
-    var matomeRange = "B5:B" + lastRow;
+    var matomeRange = "A5:A" + lastRow;
     var matomeData = matomeSheet.getRange(matomeRange).getValues();
     var firstDay = null;
     var lastDay = 0;
 
     var actualMonth = month+1;
-    var helperStringInit = username+"さんが"+year+"年"+actualMonth+"月には";
+    var helperStringInit = username+"さんの"+year+"年"+actualMonth+"月の勤務時間は";
     var helperStringFin = "時間働きました";
 
     for (var i = 0; i < matomeData.length; i++) {
@@ -145,14 +145,19 @@ loadGSTimesheets = function () {
     if (firstDay != null && lastDay != null) {
       var hoursData = 0;
       for (var n = firstDay; n <= lastDay; n++) {
-        if (matomeSheet.getRange("F"+n).getValue()) {
-          hoursData += parseFloat(matomeSheet.getRange("F"+n).getValue());
+        var workingTime = matomeSheet.getRange("F"+n).getValue();
+        if (workingTime) {
+          try {
+            hoursData += parseFloat(workingTime);
+            matomeSheet.getRange("G" + n).setValue(hoursData);
+          } catch (e) {
+          }
         }
       }
       return helperStringInit+hoursData+helperStringFin;
     }
     else {
-      return helperStringInit+"出勤しませんでした";
+      return helperStringInit+"ありませんでした";
     }
 
   };

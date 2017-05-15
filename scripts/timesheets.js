@@ -34,6 +34,7 @@ loadTimesheets = function (exports) {
       ['actionSignIn', /(モ[ー〜]+ニン|も[ー〜]+にん|おっは|おは|へろ|はろ|ヘロ|ハロ|出勤)/],
       ['actionNoKyuukei', /(休憩なし)/],
       ['actionNakanuke', /(なかぬけ|休憩)/],
+      ['actionAllMonthTotal', /(全員の集計)/],
       ['actionMonthTotal', /(集計)/],
       ['confirmSignIn', /__confirmSignIn__/],
       ['confirmSignOut', /__confirmSignOut__/],
@@ -52,7 +53,24 @@ loadTimesheets = function (exports) {
     }
   };
 
-  // calculatemonthtotal -- TODO 一ヶ月の計算
+  // calculate total worked hours for everyone
+  Timesheets.prototype.actionAllMonthTotal = function(username, message) {
+    var yearReg = /\d+(?=\/)/;
+    var year = yearReg.exec(message);
+    year = year[0];
+
+    var monthReg = /\d+$/;
+    var month = monthReg.exec(message);
+    month = month[0]-1;
+
+    var self = this;
+    _.each(this.storage.getUsers(), function(username){
+        var calculateMonth = self.storage.getMonthTotal(username, month, year);
+        self.responder.send(calculateMonth);
+    });
+  };
+
+  // calculatemonthtotal 1ヶ月の計算
   Timesheets.prototype.actionMonthTotal = function(username, message) {
     var userReg = /:([^\s]+)/;
     var user = userReg.exec(message);
@@ -215,7 +233,7 @@ loadTimesheets = function (exports) {
       var dateObj = new Date(this.date[0], this.date[1]-1, this.date[2]);
       var data = this.storage.get(username, dateObj);
       // if(!data.signOut || data.signOut === '-') {　// day-off does not work if the row isnt empty, so i commented the if() out
-        this.storage.set(username, dateObj, {signIn: '-', signOut: '-', note: message, kyuukei: '-', workedHours: '-'});
+        this.storage.set(username, dateObj, {signIn: '-', signOut: '-', note: message, kyuukei: '-', workedHours: 0});
         this.responder.template("休暇", username, DateUtils.format("Y/m/d", dateObj));
       // }
     }

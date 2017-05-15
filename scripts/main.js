@@ -72,7 +72,7 @@ function setUp() {
     settings.setNote('Slack Incoming URL', 'Slackのincoming URLを入力してください');
     settings.set('開始日', DateUtils.format("Y-m-d", DateUtils.now()));
     settings.setNote('開始日', '変更はしないでください');
-    settings.set('無視するユーザ', 'miyamoto,hubot,slackbot,incoming-webhook');
+    settings.set('無視するユーザ', 'miyamoto,hubot,slackbot,incoming-webhook,timesheets,time-sheets');
     settings.setNote('無視するユーザ', '反応をしないユーザを,区切りで設定する。botは必ず指定してください。');
 
     // 休日を設定 (iCal)
