@@ -142,6 +142,8 @@ loadTimesheets = function (exports) {
   // なかぬけ
   Timesheets.prototype.actionNakanuke = function(username, message) {
     if(this.date) {
+      var overTime = 0;
+      var lateHours = 0;
       var dateObj = new Date(this.date[0], this.date[1]-1, this.date[2]);
       var data = this.storage.get(username, dateObj);
       var nakanukeTime = message.replace(/^\D+|\D+$/g, "");
@@ -154,7 +156,7 @@ loadTimesheets = function (exports) {
         else {
           var workedHours = data.signOut - data.signIn;
           workedHours = workedHours/ 1000 / 60 / 60;
-          this.storage.set(username, dateObj, {kyuukei: nakanukeTime, workedHours: rounder(workedHours)-nakanukeTime});
+          this.storage.set(username, dateObj, {kyuukei: nakanukeTime, workedHours: rounder(workedHours)-nakanukeTime, overTime: overTime, lateHours: lateHours});
         }
         this.responder.template("なかぬけ", username, this.dateStr, nakanukeTime);
         this.actionDayTotal(username, message);
@@ -205,12 +207,21 @@ loadTimesheets = function (exports) {
   // 退勤
   Timesheets.prototype.actionSignOut = function(username, message) {
     if(this.datetime) {
+      var overTime = 0;
+      var lateHours = 0;
       var data = this.storage.get(username, this.datetime);
       var workedHours;
       if(!data.signOut || data.signOut === '-') {
-        workedHours = Math.abs(this.datetime - data.signIn);
+        workedHours = this.datetime - new Date(new Date().getFullYear(),new Date().getMonth(),new Date().getDate(),22,0,0);
         workedHours = workedHours/ 1000 / 60 / 60;
-        this.storage.set(username, this.datetime, { signOut: this.datetime, workedHours: rounder(workedHours) - data.kyuukei });
+        workedHours = rounder(workedHours) - data.kyuukei;
+        if (workedHours > 8) {
+          overTime = workedHours - 8;
+        }
+        if (this.datetime.getHours() >= 22 && this.datetime.getHours() <= 5) {
+          Math.abs(this.datetime -
+        }
+        this.storage.set(username, this.datetime, { signOut: this.datetime, workedHours: workedHours, overTime: overTime, lateHours: lateHours });
         this.responder.template("退勤", username, this.datetimeStr);
         this.actionDayTotal(username, message);
       }
@@ -219,7 +230,11 @@ loadTimesheets = function (exports) {
         if(!!this.time) {
           workedHours = Math.abs(this.datetime - data.signIn);
           workedHours = workedHours/ 1000 / 60 / 60;
-          this.storage.set(username, this.datetime, {signOut: this.datetime, workedHours: rounder(workedHours) - data.kyuukei});
+          workedHours = rounder(workedHours) - data.kyuukei;
+          if (workedHours > 8) {
+            overTime = workedHours - 8;
+          }
+          this.storage.set(username, this.datetime, {signOut: this.datetime, workedHours: workedHours, overTime: overTime, lateHours: lateHours});
           this.responder.template("退勤更新", username, this.datetimeStr);
           this.actionDayTotal(username, message);
         }
@@ -233,7 +248,7 @@ loadTimesheets = function (exports) {
       var dateObj = new Date(this.date[0], this.date[1]-1, this.date[2]);
       var data = this.storage.get(username, dateObj);
       // if(!data.signOut || data.signOut === '-') {　// day-off does not work if the row isnt empty, so i commented the if() out
-        this.storage.set(username, dateObj, {signIn: '-', signOut: '-', note: message, kyuukei: '-', workedHours: 0});
+        this.storage.set(username, dateObj, {signIn: '-', signOut: '-', note: message, kyuukei: '-', workedHours: 0, overTime: 0, lateHours: 0});
         this.responder.template("休暇", username, DateUtils.format("Y/m/d", dateObj));
       // }
     }
@@ -245,7 +260,7 @@ loadTimesheets = function (exports) {
       var dateObj = new Date(this.date[0], this.date[1]-1, this.date[2]);
       var data = this.storage.get(username, dateObj);
       if(!data.signOut || data.signOut === '-') {
-        this.storage.set(username, dateObj, {signIn: null, signOut: null, note: message, kyuukei: null, workedHours: null});
+        this.storage.set(username, dateObj, {signIn: null, signOut: null, note: message, kyuukei: null, workedHours: null, overTime: null, lateHours: null});
         this.responder.template("休暇取消", username, DateUtils.format("Y/m/d", dateObj));
       }
     }

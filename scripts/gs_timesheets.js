@@ -15,7 +15,9 @@ loadGSTimesheets = function () {
         { name: 'ノート' },
         { name: '休憩' },
         { name: '就業時間' },
-        { name: '累計' }
+        { name: '累計' },
+        { name: '時間外ロード' },
+        { name: '深夜ロード' }
       ],
       properties: [
         { name: 'DayOff', value: '土,日', comment: '← 月,火,水みたいに入力してください。アカウント停止のためには「全部」と入れてください。'},
@@ -74,17 +76,17 @@ loadGSTimesheets = function () {
       return v === '' ? undefined : v;
     });
 
-    return({ user: username, date: row[0], signIn: row[1], signOut: row[2], note: row[3], kyuukei: row[4], workedHours: row[5], totalWorkedInMonth: row[6] });
+    return({ user: username, date: row[0], signIn: row[1], signOut: row[2], note: row[3], kyuukei: row[4], workedHours: row[5], totalWorkedInMonth: row[6], overTime: row[7], lateHours: row[8] });
   };
 
   GSTimesheets.prototype.set = function(username, date, params) {
     var row = this.get(username, date);
-    _.extend(row, _.pick(params, 'signIn', 'signOut', 'note', 'kyuukei', 'workedHours', 'totalWorkedInMonth'));
+    _.extend(row, _.pick(params, 'signIn', 'signOut', 'note', 'kyuukei', 'workedHours', 'totalWorkedInMonth', 'overTime', 'lateHours'));
 
     var sheet = this._getSheet(username);
     var rowNo = this._getRowNo(username, date);
 
-    var data = [DateUtils.toDate(date), row.signIn, row.signOut, row.note, row.kyuukei, row.workedHours, row.totalWorkedInMonth].map(function(v) {
+    var data = [DateUtils.toDate(date), row.signIn, row.signOut, row.note, row.kyuukei, row.workedHours, row.totalWorkedInMonth, row.overTime, row.lateHours].map(function(v) {
       return v == null ? '' : v;
     });
     sheet.getRange("A"+rowNo+":"+String.fromCharCode(65 + this.scheme.columns.length - 1)+rowNo).setValues([data]);
