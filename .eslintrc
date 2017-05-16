@@ -1,0 +1,19 @@
+{
+  "plugins": [
+    "googleappsscript"
+  ],
+  "env": {
+    "googleappsscript/googleappsscript": true,
+    "es6": true,
+    "mocha": true
+  },
+  "globals": {
+    "global": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "rules": {
+  }
+}

@@ -1,6 +1,45 @@
-# 勤怠管理bot - みやもとさん
+# Slack Timesheet
+
 
 Google Apps Scriptで書かれた、Slack上で動く勤怠管理Bot。
+
+「勤怠管理bot - みやもとさん」をベースに開発しています
+- Copyright 2014- Yuichiro MASUI <masui@masuidrive.jp>
+- https://github.com/masuidrive/miyamoto
+
+
+## 開発環境設定
+
+### Apps Scriptを利用します
+
+http://tech.speee.jp/entry/2016/04/28/190236
+
+
+
+
+### コンパイル
+
+```
+npm install
+
+npm run gulp
+```
+
+### アップロード
+
+```
+gapps upload
+```
+
+
+
+
+
+
+
+
+
+
 
 Slackで下記の様につぶやくと、みやもとさんがGoogle Spreadsheetに勤怠を記録してくれます。
 
