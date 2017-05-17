@@ -38,7 +38,7 @@ export default class DateTime {
             if(matches[2] != null) {
                 hour = parseInt(matches[2]);
                 min = parseInt(matches[3] ? matches[3] : '0');
-                if(_.contains(['pm'], matches[4])) {
+                if(_.includes(['pm'], matches[4])) {
                     hour += 12;
                 }
             }
@@ -47,7 +47,7 @@ export default class DateTime {
             if(matches[5] != null) {
                 hour = parseInt(matches[6]);
                 min = parseInt(matches[8] ? matches[8] : '0');
-                if(_.contains(['pm', '午後'], matches[5])) {
+                if(_.includes(['pm', '午後'], matches[5])) {
                     hour += 12;
                 }
             }
@@ -56,7 +56,7 @@ export default class DateTime {
             if(matches[9] != null) {
                 hour = parseInt(matches[9]);
                 min = parseInt(matches[11] ? matches[11] : '0');
-                if(_.contains(['pm'], matches[12])) {
+                if(_.includes(['pm'], matches[12])) {
                     hour += 12;
                 }
             }
