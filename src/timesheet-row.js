@@ -157,10 +157,30 @@ export default class TimesheetRow {
     // ToDo:いろいろ計算する
 
 
-
   }
 
+  static rounder(num) {
+    var intPart = Math.floor(num);
 
+    var decimalPart = num - intPart;
+    if (decimalPart >= 0.75) {
+      return intPart+".75";
+    }
+    else if (decimalPart >= 0.5) {
+      return intPart+".5";
+    }
+    else if (decimalPart >= 0.25) {
+      return intPart+".25";
+    }
+    else {
+      return intPart;
+    }
+  }
 
+  workedHours(start, end, restedHours) {
+    var workedHours = moment(end, "HH:mm").diff(moment(start, "HH:mm"), 'hours', true);
+    workedHours = msToHours(workedHours);
+    return this.rounder(workedHours - restedHours);
+  }
 
 }
