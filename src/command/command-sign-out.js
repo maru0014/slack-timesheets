@@ -1,5 +1,6 @@
 import CommandAbstract from './command-abstract';
 import CommandTotal from './command-total';
+import TimesheetRow from '../timesheet-row';
 
 import moment from 'moment';
 
@@ -22,25 +23,23 @@ export default class CommandSignOut extends CommandAbstract{
 
   execute(username, date, time) {
 
-
     const now = moment();
     const row = this.timesheets.get(username, date? date: now);
 
-
     if (!row.getSignOut() || row.getSignOut() === '-') {
 
+      var setterTime = time? time.format('HH:mm'): now.format('HH:mm');
 
-      if (time) {
-        row.setSignOut(time.format('HH:mm'));
-      } else {
-        row.setSignOut(now.format('HH:mm'));
-      }
+      row.setSignOut(setterTime);
+      row.setWorkedHours(TimesheetRow.workedHours(row.getSignIn(), row.getSignOut(), row.getRestTime()));
 
       this.timesheets.set(row);
       this.slack.send(this.template.render(
-        "退勤", username, date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
+        "退勤", username, date? date.format('YYYY/MM/DD')+' '+setterTime: now.format('YYYY/MM/DD HH:mm')
       ));
+
       this.commandTotal.execute(username, date, time);
+
     } else {
 
       // 更新の場合は時間を明示する必要がある
@@ -49,15 +48,15 @@ export default class CommandSignOut extends CommandAbstract{
         return;
       }
       row.setSignOut(time.format('HH:mm'));
+      row.setWorkedHours(TimesheetRow.workedHours(row.getSignIn(), row.getSignOut(), row.getRestTime()));
 
       this.timesheets.set(row);
       this.slack.send(this.template.render(
-        "退勤更新", username, date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
+        "退勤更新", username, (date? date.format('YYYY/MM/D'): now.format('YYYY/MM/DD'))+' '+(time? time.format('HH:mm'): now.format('HH:mm'))
       ));
+
       this.commandTotal.execute(username, date, time);
+      
     }
-
-
-
   }
 }
