@@ -5,3 +5,5 @@ gas-config.json
 /.idea/*
 main.gs
 /gapps.config.json
+/client_secret.json
+/dist/main.js
