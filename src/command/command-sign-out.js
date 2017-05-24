@@ -28,17 +28,20 @@ export default class CommandSignOut extends CommandAbstract{
 
     if (!row.getSignOut() || row.getSignOut() === '-') {
 
-      var setterTime = time? time.format('HH:mm'): now.format('HH:mm');
+      let setterTime = time? date.format('YYYY/MM/DD')+" "+time.format('HH:mm'): now.format('YYYY/MM/DD HH:mm');
+      let workedHours = TimesheetRow.workedHours(row.getSignIn(), setterTime, row.getRestTime());
 
       row.setSignOut(setterTime);
-      row.setWorkedHours(TimesheetRow.workedHours(row.getSignIn(), row.getSignOut(), row.getRestTime()));
+      row.setWorkedHours( (workedHours<=8) ? workedHours : "8" );
+      row.setOvertimeHours( TimesheetRow.overtimeHours(workedHours) );
+      row.setLateHours( TimesheetRow.lateHours(moment(row.getSignIn()), setterTime) );
 
       this.timesheets.set(row);
       this.slack.send(this.template.render(
-        "退勤", username, date? date.format('YYYY/MM/DD')+' '+setterTime: now.format('YYYY/MM/DD HH:mm')
+        "退勤", username, setterTime
       ));
 
-      this.commandTotal.execute(username, date, time);
+      // this.commandTotal.execute(username, date, time);
 
     } else {
 
@@ -47,16 +50,21 @@ export default class CommandSignOut extends CommandAbstract{
         this.slack.send('今日はもう退勤してますよ');
         return;
       }
-      row.setSignOut(time.format('HH:mm'));
-      row.setWorkedHours(TimesheetRow.workedHours(row.getSignIn(), row.getSignOut(), row.getRestTime()));
+      let setterTime = date.format('YYYY/MM/DD') + ' ' + time.format('HH:mm');
+      let workedHours = TimesheetRow.workedHours(row.getSignIn(), setterTime, row.getRestTime());
+
+      row.setSignOut(setterTime);
+      row.setWorkedHours( workedHours<=8? workedHours: "8" );
+      row.setOvertimeHours( TimesheetRow.overtimeHours(workedHours) );
+      row.setLateHours( TimesheetRow.lateHours(moment(row.getSignIn()), setterTime) );
 
       this.timesheets.set(row);
       this.slack.send(this.template.render(
-        "退勤更新", username, (date? date.format('YYYY/MM/D'): now.format('YYYY/MM/DD'))+' '+(time? time.format('HH:mm'): now.format('HH:mm'))
+        "退勤更新", username, setterTime
       ));
 
-      this.commandTotal.execute(username, date, time);
-      
+      // this.commandTotal.execute(username, date, time);
+
     }
   }
 }
