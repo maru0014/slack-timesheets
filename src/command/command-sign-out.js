@@ -41,7 +41,7 @@ export default class CommandSignOut extends CommandAbstract{
         "退勤", username, setterTime
       ));
 
-      // this.commandTotal.execute(username, date, time);
+      this.commandTotal.execute(username, date, time);
 
     } else {
 
@@ -63,7 +63,7 @@ export default class CommandSignOut extends CommandAbstract{
         "退勤更新", username, setterTime
       ));
 
-      // this.commandTotal.execute(username, date, time);
+      this.commandTotal.execute(username, date, time);
 
     }
   }
