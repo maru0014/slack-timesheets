@@ -3,6 +3,7 @@ import CommandHelp from './command-help';
 import CommandSignIn from './command-sign-in';
 import CommandSignOut from './command-sign-out';
 import CommandTotal from "./command-total";
+import CommandNoBreak from "./command-no-break";
 
 
 export default class Dispatcher {
@@ -31,6 +32,7 @@ export default class Dispatcher {
       CommandSignOut,
       CommandSignIn,
       CommandTotal,
+      CommandNoBreak,
       CommandHelp
     ];
 
