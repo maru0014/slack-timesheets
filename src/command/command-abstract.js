@@ -25,8 +25,9 @@ export default class CommandAbstract {
    * @param username {String}
    * @param date {Moment|null}
    * @param time {Moment|null}
+   * @param body {String|null}
    */
-  execute(username, date, time) {
+  execute(username, date, time, body=null) {
 
   }
 }
