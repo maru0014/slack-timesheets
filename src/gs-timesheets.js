@@ -105,6 +105,25 @@ export default class GSTimesheets {
     }
   }
 
+  // /**
+  //  *
+  //  * @param username {String}
+  //  * @param date {Moment}
+  //  * @returns {TimesheetRow}
+  //  */
+  // getFullRange(username, date) {
+  //   var sheet = this._getSheet(username);
+  //   var rowNo = this._getRowNo(username, date);
+  //   var getRa
+  //   var row = sheet.getRange("A"+rowNo+":"+String.fromCharCode(65 + this.scheme.columns.length - 1)+rowNo).getValues()[0].map(function(v) {
+  //     return v === '' ? undefined : v;
+  //   });
+  //
+  //   if (row) {
+  //     return new TimesheetRow(username, date, row);
+  //   }
+  // }
+
   /**
    *
    * @param row {TimesheetRow}
