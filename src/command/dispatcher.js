@@ -5,6 +5,7 @@ import CommandSignOut from './command-sign-out';
 import CommandTotal from "./command-total";
 import CommandNoRest from "./command-no-rest";
 import CommandRestHours from "./command-rest-hours";
+import CommandMonthTotal from "./command-month-total";
 
 
 export default class Dispatcher {
@@ -35,6 +36,7 @@ export default class Dispatcher {
       CommandTotal,
       CommandNoRest,
       CommandRestHours,
+      CommandMonthTotal,
       CommandHelp
     ];
 

@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import moment from 'moment';
+import GSTimesheets from './gs-timesheets'
 
 export default class TimesheetRow {
 
@@ -223,6 +224,49 @@ export default class TimesheetRow {
 
       let lateHours = moment(current).diff(moment(original), 'hours', true);
       return TimesheetRow.rounder(lateHours);
+    }
+  }
+
+  static getMonthTotal(user, year, month) {
+    let matomeSheet = GSTimesheets._getSheet(user);
+    let lastRow = matomeSheet.getLastRow();
+    let matomeRange = "B5:B" + lastRow;
+    let matomeData = matomeSheet.getRange(matomeRange).getValues();
+    let firstDay = null;
+    let lastDay = 0;
+
+    let actualMonth = month+1;
+    let helperStringInit = user+"さんが"+year+"年"+actualMonth+"月には";
+    let helperStringFin = "時間働きました";
+
+    for (let i = 0; i < matomeData.length; i++) {
+      if (matomeData[i][0]){
+        if (matomeData[i][0].getMonth() == month && matomeData[i][0].getYear() == year) {
+          firstDay = i + 5;
+          break;
+        }
+      }
+    }
+    for (let j = matomeData.length-1; j >= 0; j--) {
+      if (matomeData[j][0]) {
+        if (matomeData[j][0].getMonth() == month && matomeData[j][0].getYear() == year) {
+          lastDay = j + 5;
+          break;
+        }
+      }
+    }
+
+    if (firstDay != null && lastDay != null) {
+      var hoursData = 0;
+      for (let n = firstDay; n <= lastDay; n++) {
+        if (matomeSheet.getRange("F"+n).getValue()) {
+          hoursData += parseFloat(matomeSheet.getRange("F"+n).getValue());
+        }
+      }
+      return helperStringInit+hoursData+helperStringFin;
+    }
+    else {
+      return helperStringInit+"出勤しませんでした";
     }
   }
 
