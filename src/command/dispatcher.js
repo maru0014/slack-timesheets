@@ -2,6 +2,7 @@ import DateTime from '../date-time';
 import CommandHelp from './command-help';
 import CommandSignIn from './command-sign-in';
 import CommandSignOut from './command-sign-out';
+import CommandTotal from "./command-total";
 
 
 export default class Dispatcher {
@@ -29,6 +30,7 @@ export default class Dispatcher {
       // ['actionDayTotal', /(何時間働)/],
       CommandSignOut,
       CommandSignIn,
+      CommandTotal,
       CommandHelp
     ];
 
