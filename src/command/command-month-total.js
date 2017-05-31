@@ -37,8 +37,8 @@ export default class CommandMonthTotal extends CommandAbstract{
 
 
     let workedHoursCol = "F";
-    let overtimeHoursCol = "H";
-    let lateHoursCol = "I";
+    let overtimeHoursCol = "G";
+    let lateHoursCol = "H";
 
     let actualMonth = month+1; //
     let helperStringInit = username+"さんが"+year+"年"+actualMonth+"月は";

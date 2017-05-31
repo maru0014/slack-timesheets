@@ -22,7 +22,6 @@ export default class GSTimesheets {
         { name: 'ノート' },
         { name: '休憩' },
         { name: '就業時間' },
-        { name: '累計' },
         { name: '時間外労働' },
         { name: '深夜労働' }
       ],
@@ -105,25 +104,6 @@ export default class GSTimesheets {
     }
   }
 
-  // /**
-  //  *
-  //  * @param username {String}
-  //  * @param date {Moment}
-  //  * @returns {TimesheetRow}
-  //  */
-  // getFullRange(username, date) {
-  //   var sheet = this._getSheet(username);
-  //   var rowNo = this._getRowNo(username, date);
-  //   var getRa
-  //   var row = sheet.getRange("A"+rowNo+":"+String.fromCharCode(65 + this.scheme.columns.length - 1)+rowNo).getValues()[0].map(function(v) {
-  //     return v === '' ? undefined : v;
-  //   });
-  //
-  //   if (row) {
-  //     return new TimesheetRow(username, date, row);
-  //   }
-  // }
-
   /**
    *
    * @param row {TimesheetRow}
@@ -158,56 +138,5 @@ export default class GSTimesheets {
       return self.get(username, date);
     });
   }
-
-  // 休みの曜日を数字で返す
-  getDayOff(username) {
-    var sheet = this._getSheet(username);
-    return DateUtils.parseWday(sheet.getRange("B2").getValue());
-  }
-
-  // １ヶ月分の集計
-  getMonthTotal(username, month, year) {
-    var matomeSheet = this._getSheet(username);
-    var lastRow = matomeSheet.getLastRow();
-    var matomeRange = "B5:B" + lastRow;
-    var matomeData = matomeSheet.getRange(matomeRange).getValues();
-    var firstDay = null;
-    var lastDay = 0;
-
-    var actualMonth = month+1;
-    var helperStringInit = username+"さんが"+year+"年"+actualMonth+"月には";
-    var helperStringFin = "時間働きました";
-
-    for (var i = 0; i < matomeData.length; i++) {
-      if (matomeData[i][0]){
-        if (matomeData[i][0].getMonth() == month && matomeData[i][0].getYear() == year) {
-          firstDay = i + 5;
-          break;
-        }
-      }
-    }
-    for (var j = matomeData.length-1; j >= 0; j--) {
-      if (matomeData[j][0]) {
-        if (matomeData[j][0].getMonth() == month && matomeData[j][0].getYear() == year) {
-          lastDay = j + 5;
-          break;
-        }
-      }
-    }
-
-    if (firstDay != null && lastDay != null) {
-      var hoursData = 0;
-      for (var n = firstDay; n <= lastDay; n++) {
-        if (matomeSheet.getRange("F"+n).getValue()) {
-          hoursData += parseFloat(matomeSheet.getRange("F"+n).getValue());
-        }
-      }
-      return helperStringInit+hoursData+helperStringFin;
-    }
-    else {
-      return helperStringInit+"出勤しませんでした";
-    }
-
-  };
 
 }
