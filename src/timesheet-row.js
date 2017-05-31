@@ -185,6 +185,7 @@ export default class TimesheetRow {
 
   static workedHours(start, end, restedHours) {
     let workedHours = moment(end).diff(moment(start), 'hours', true);
+    if (restedHours == null || restedHours == "" || !restedHours)restedHours = 0;
     return TimesheetRow.rounder(workedHours - restedHours);
   }
 

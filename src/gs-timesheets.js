@@ -63,7 +63,6 @@ export default class GSTimesheets {
           sheet.getRange("B5:B").setNumberFormat("H:MM");
           sheet.getRange("C5:C").setNumberFormat("H:MM");
         }
-        //this.on("newUser", username);
       }
     }
 

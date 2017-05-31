@@ -26,7 +26,7 @@ export default class DateTime {
 
     // テキストから時間を抽出
     static parseTime (str) {
-        str = String(str || "").toLowerCase().replace(/[Ａ-Ｚａ-ｚ０-９ ：]/g, function(s) {
+        str = String(str || "").toLowerCase().replace(/[Ａ-Ｚａ-ｚ０-９：／．]/g, function(s) {
             return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
         });
 
@@ -77,7 +77,7 @@ export default class DateTime {
 
     // テキストから日付を抽出
     static parseDate (str) {
-        str = String(str || "").toLowerCase().replace(/[Ａ-Ｚａ-ｚ０-９ ／]/g, function(s) {
+        str = String(str || "").toLowerCase().replace(/[Ａ-Ｚａ-ｚ０-９：／．]/g, function(s) {
             return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
         });
 

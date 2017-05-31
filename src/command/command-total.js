@@ -11,8 +11,11 @@ export default class CommandTotal extends CommandAbstract{
     const row = this.timesheets.get(username, date? date: now);
 
     if (row.getWorkedHours() && row.getWorkedHours() > 0) {
-
-      let message = row.getRestTime()+"";
+      let restTime = row.getRestTime();
+      if (!row.getRestTime()) {
+        restTime = "0";
+      }
+      let message = restTime+"";
 
       if (row.getOvertimeHours()) {
         message += "時間、時間外労働"+row.getOvertimeHours();
