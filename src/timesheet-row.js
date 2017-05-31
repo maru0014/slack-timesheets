@@ -12,7 +12,7 @@ export default class TimesheetRow {
    */
   constructor(username, date, row) {
     this.username = username;
-    this.row = row? row: ["","","","","","","","",""];
+    this.row = row? row: ["","","","","","","",""];
     this.setDate(date);
     if (!row) {
       this.setRestTime(1);
@@ -126,22 +126,8 @@ export default class TimesheetRow {
     return this;
   }
 
-  getTotalWorkedHoursInMonth() {
-    return this.row[6];
-  }
-
-  /**
-   *
-   * @param totalWorkedHoursInMonth
-   * @returns {TimesheetRow}
-   */
-  setTotalWorkedHoursInMonth(totalWorkedHoursInMonth) {
-    this.row[6] = totalWorkedHoursInMonth;
-    return this;
-  }
-
   getOvertimeHours() {
-    return this.row[7];
+    return this.row[6];
   }
 
   /**
@@ -150,12 +136,12 @@ export default class TimesheetRow {
    * @returns {TimesheetRow}
    */
   setOvertimeHours(overtimeHours) {
-    this.row[7] = overtimeHours;
+    this.row[6] = overtimeHours;
     return this;
   }
 
   getLateHours() {
-    return this.row[8];
+    return this.row[7];
   }
 
   /**
@@ -164,15 +150,9 @@ export default class TimesheetRow {
    * @returns {TimesheetRow}
    */
   setLateHours(lateHours) {
-    this.row[8] = lateHours;
+    this.row[7] = lateHours;
     return this;
   }
-
-
-
-  // ToDo: 超過勤務時間と深夜時間
-
-
 
   calculate() {
     const signIn = this.getSignIn();
@@ -182,9 +162,6 @@ export default class TimesheetRow {
     if (!signIn || signIn === '-' || !signOut || signOut === '-') {
       return;
     }
-
-    // ToDo:いろいろ計算する
-
 
   }
 
