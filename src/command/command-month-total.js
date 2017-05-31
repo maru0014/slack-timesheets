@@ -28,7 +28,7 @@ export default class CommandMonthTotal extends CommandAbstract{
 
 
   static _getMonthTotal(username, month, year, timesheets) {
-    let matomeSheet = timesheets._getSheet(username);
+    let matomeSheet = timesheets._getSheet(username, false);
     let lastRow = matomeSheet.getLastRow();
     let matomeRange = "B5:B" + lastRow;
     let matomeData = matomeSheet.getRange(matomeRange).getValues();
