@@ -15,10 +15,10 @@ export default class CommandTotal extends CommandAbstract{
       let message = row.getRestTime()+"";
 
       if (row.getOvertimeHours()) {
-        message += "時間、時間外ロード"+row.getOvertimeHours();
+        message += "時間、時間外労働"+row.getOvertimeHours();
       }
       if (row.getLateHours()) {
-        message += "時間、深夜ロード"+row.getLateHours();
+        message += "時間、深夜労働"+row.getLateHours();
       }
 
       this.slack.send(this.template.render(

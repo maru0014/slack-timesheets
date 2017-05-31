@@ -27,7 +27,7 @@ global.test = () => {
     const kernel = new Kernel();
     if (kernel.boot()) {
         const dispatcher = new CommandDispatcher(kernel);
-        dispatcher.dispatch('takabayashi', '5/16は10:30から出勤しました');
+        dispatcher.dispatch('takabayashi', '集計 :nodir-xearts 2017/5');
     }
 }
 
