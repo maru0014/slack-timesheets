@@ -36,6 +36,7 @@ export default class CommandMonthTotal extends CommandAbstract{
     let lastDay = 0;
 
 
+    let signInCol = "B";
     let workedHoursCol = "F";
     let overtimeHoursCol = "G";
     let lateHoursCol = "H";
@@ -72,19 +73,26 @@ export default class CommandMonthTotal extends CommandAbstract{
       let totalLateHours = 0;
 
       for (let n = firstDay; n <= lastDay; n++) {
-        if (matomeSheet.getRange(workedHoursCol+n).getValue()) {
-          totalWorkedHours += parseFloat(matomeSheet.getRange(workedHoursCol+n).getValue());
+        let signInValue = matomeSheet.getRange(signInCol+n).getValue();
+        let workedHoursValue = matomeSheet.getRange(workedHoursCol+n).getValue();
 
-          let _totalOvertimeHours = parseFloat(matomeSheet.getRange(overtimeHoursCol+n).getValue());
-          if (_totalOvertimeHours) {
-            totalOvertimeHours += _totalOvertimeHours;
-          }
+        if (signInValue && !workedHoursValue) {
+          return username+"さんが"+year+"年"+actualMonth+"月"+moment(signInValue).date()+"日に退勤してないです、直してください";
+        }
 
-          let _totalLateHours = parseFloat(matomeSheet.getRange(lateHoursCol+n).getValue());
-          if (_totalLateHours) {
-            totalLateHours += _totalLateHours;
-          }
+        let _totalWorkedHours = parseFloat(workedHoursValue);
+        if (_totalWorkedHours) {
+          totalWorkedHours += _totalWorkedHours;
+        }
 
+        let _totalOvertimeHours = parseFloat(matomeSheet.getRange(overtimeHoursCol + n).getValue());
+        if (_totalOvertimeHours) {
+          totalOvertimeHours += _totalOvertimeHours;
+        }
+
+        let _totalLateHours = parseFloat(matomeSheet.getRange(lateHoursCol + n).getValue());
+        if (_totalLateHours) {
+          totalLateHours += _totalLateHours;
         }
       }
       return helperStringInit+helperStringWorkedHours+totalWorkedHours+helperStringHour+helperStringOvertimeHours+totalOvertimeHours+helperStringHour+helperStringLateHours+totalLateHours+helperStringHour+helperStringFin;
