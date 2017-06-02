@@ -1,5 +1,7 @@
 import CommandAbstract from './command-abstract';
 
+import moment from 'moment';
+
 export default class CommandTotal extends CommandAbstract{
   static match(body) {
     return body.match(/何時間働|勤務時間/);
@@ -25,18 +27,18 @@ export default class CommandTotal extends CommandAbstract{
       }
 
       this.slack.send(this.template.render(
-        "合計時間", username, date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD'), message, row.getWorkedHours()
+        "合計時間", username, date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD'), moment(row.getSignIn()).format("HH:mm"), moment(row.getSignOut()).format("HH:mm"), row.getWorkedHours(), message
       ));
     }
     else {
       if (row.getSignIn() && !row.getSignOut() ){
         this.slack.send(
-          "@"+username+" "+(date? date.format('MM/DD'): now.format('MM/DD'))+"はまだ退勤してません"
+          "@"+username+" "+(date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD'))+"はまだ退勤してません"
         );
       }
       else {
         this.slack.send(
-          "@"+username+" "+(date? date.format('MM/DD'): now.format('MM/DD'))+"は出勤してません"
+          "@"+username+" "+(date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD'))+"は出勤してません"
         );
       }
     }
