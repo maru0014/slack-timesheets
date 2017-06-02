@@ -26,45 +26,52 @@ export default class CommandSignOut extends CommandAbstract{
     const now = moment();
     const row = this.timesheets.get(username, date? date: now);
 
-    if (!row.getSignOut() || row.getSignOut() === '-') {
+    if (row.getSignIn() || row.getSignIn() === '-') {
 
-      let setterTime = time? date.format('YYYY/MM/DD')+" "+time.format('HH:mm'): now.format('YYYY/MM/DD HH:mm');
-      let workedHours = TimesheetRow.workedHours(row.getSignIn(), setterTime, row.getRestTime());
+      if (!row.getSignOut() || row.getSignOut() === '-') {
 
-      row.setSignOut(setterTime);
-      row.setWorkedHours( (workedHours<=8) ? workedHours : "8" );
-      row.setOvertimeHours( TimesheetRow.overtimeHours(workedHours) );
-      row.setLateHours( TimesheetRow.lateHours(moment(row.getSignIn()), setterTime) );
+          let setterTime = time ? date.format('YYYY/MM/DD') + " " + time.format('HH:mm') : now.format('YYYY/MM/DD HH:mm');
+          let workedHours = TimesheetRow.workedHours(row.getSignIn(), setterTime, row.getRestTime());
 
-      this.timesheets.set(row);
-      this.slack.send(this.template.render(
-        "退勤", username, setterTime
-      ));
+          row.setSignOut(setterTime);
+          row.setWorkedHours((workedHours <= 8) ? workedHours : "8");
+          row.setOvertimeHours(TimesheetRow.overtimeHours(workedHours));
+          row.setLateHours(TimesheetRow.lateHours(moment(row.getSignIn()), setterTime));
 
-      this.commandTotal.execute(username, date, time);
+          this.timesheets.set(row);
+          this.slack.send(this.template.render(
+              "退勤", username, setterTime
+          ));
 
-    } else {
+          this.commandTotal.execute(username, date, time);
 
-      // 更新の場合は時間を明示する必要がある
-      if (!time) {
-        this.slack.send('今日はもう退勤してますよ');
-        return;
+      } else {
+
+          // 更新の場合は時間を明示する必要がある
+          if (!time) {
+              this.slack.send('今日はもう退勤してますよ');
+              return;
+          }
+          let setterTime = date.format('YYYY/MM/DD') + ' ' + time.format('HH:mm');
+          let workedHours = TimesheetRow.workedHours(row.getSignIn(), setterTime, row.getRestTime());
+
+          row.setSignOut(setterTime);
+          row.setWorkedHours(workedHours <= 8 ? workedHours : "8");
+          row.setOvertimeHours(TimesheetRow.overtimeHours(workedHours));
+          row.setLateHours(TimesheetRow.lateHours(moment(row.getSignIn()), setterTime));
+
+          this.timesheets.set(row);
+          this.slack.send(this.template.render(
+              "退勤更新", username, setterTime
+          ));
+
+          this.commandTotal.execute(username, date, time);
+
       }
-      let setterTime = date.format('YYYY/MM/DD') + ' ' + time.format('HH:mm');
-      let workedHours = TimesheetRow.workedHours(row.getSignIn(), setterTime, row.getRestTime());
-
-      row.setSignOut(setterTime);
-      row.setWorkedHours( workedHours<=8? workedHours: "8" );
-      row.setOvertimeHours( TimesheetRow.overtimeHours(workedHours) );
-      row.setLateHours( TimesheetRow.lateHours(moment(row.getSignIn()), setterTime) );
-
-      this.timesheets.set(row);
-      this.slack.send(this.template.render(
-        "退勤更新", username, setterTime
-      ));
-
-      this.commandTotal.execute(username, date, time);
-
+    }
+    else {this.slack.send(
+        "@" + username + "は今日まだ出勤押していません。出勤押してからまた退勤押してください"
+    );
     }
   }
 }
