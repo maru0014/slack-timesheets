@@ -30,9 +30,6 @@ timesheetsの使い方：
 集計 :username year/month 〜 usernameのユーザーのyear年month月に働いた就業時間を表
 (例: 集計 :n.rashidov 2017/4)
 `;
-const slack = new Slack();
-const mock = sinon.mock(slack).expects('send').once();
-const should = chai.should();
 
 describe('HelpCommand', ()=> {
 

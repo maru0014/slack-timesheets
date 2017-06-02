@@ -3,6 +3,8 @@ import GASProperties from './gas-properties';
 import GSConfigure from './gs-configure';
 import GSTemplate from './gs-template';
 import GSTimesheets from './gs-timesheets';
+import Template from './template';
+import TemplateStrageGs from './template-strage-gs';
 import HelpCommand from './command/command-help';
 
 export default class Kernel {
@@ -20,7 +22,10 @@ export default class Kernel {
                     this.configure.get('無視するユーザ')
                 );
 
-                this.template = new GSTemplate(spreadsheet);
+
+                this.template = new Template(new TemplateStrageGs(spreadsheet));
+
+                // this.template = new GSTemplate(spreadsheet);
                 this.timesheets = new GSTimesheets(spreadsheet, this.configure);
                 return true;
 
