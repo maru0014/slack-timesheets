@@ -7,7 +7,7 @@ export default class CommandTotal extends CommandAbstract{
     return body.match(/何時間働|勤務時間/);
   }
 
-  execute(username, date, time) {
+  execute(username, date) {
 
     const now = moment();
     const row = this.timesheets.get(username, date? date: now);
@@ -27,7 +27,7 @@ export default class CommandTotal extends CommandAbstract{
       }
 
       this.slack.send(this.template.render(
-        "合計時間", username, date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD'), moment(row.getSignIn()).format("HH:mm"), moment(row.getSignOut()).format("HH:mm"), row.getWorkedHours(), message
+        "合計時間", username, date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD'), moment(row.getSignIn(), 'YYYY/MM/DD HH:mm').format("HH:mm"), moment(row.getSignOut(), 'YYYY/MM/DD HH:mm').format("HH:mm"), row.getWorkedHours(), message
       ));
     }
     else {

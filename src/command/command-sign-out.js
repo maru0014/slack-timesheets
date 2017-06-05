@@ -15,10 +15,14 @@ export default class CommandSignOut extends CommandAbstract{
    * @param template {GSTemplate}
    * @param timesheets {GSTimesheets}
    */
-  constructor(slack, template, timesheets) {
+  constructor(slack, template, timesheets, commandTotal = null) {
     super(slack, template, timesheets);
 
-    this.commandTotal = new CommandTotal(slack, template, timesheets);
+    if (commandTotal) {
+      this.commandTotal = commandTotal;
+    } else {
+      this.commandTotal = new CommandTotal(slack, template, timesheets);
+    }
   }
 
   execute(username, date, time) {
@@ -29,14 +33,13 @@ export default class CommandSignOut extends CommandAbstract{
     if (row.getSignIn() || row.getSignIn() === '-') {
 
       if (!row.getSignOut() || row.getSignOut() === '-') {
-
-          let setterTime = time ? date.format('YYYY/MM/DD') + " " + time.format('HH:mm') : now.format('YYYY/MM/DD HH:mm');
+          let setterTime = time ? moment(date).format('YYYY/MM/DD ') + moment(time, "HH:mm").format('HH:mm') : now.format('YYYY/MM/DD HH:mm');
           let workedHours = TimesheetRow.workedHours(row.getSignIn(), setterTime, row.getRestTime());
 
           row.setSignOut(setterTime);
           row.setWorkedHours((workedHours <= 8) ? workedHours : "8");
           row.setOvertimeHours(TimesheetRow.overtimeHours(workedHours));
-          row.setLateHours(TimesheetRow.lateHours(moment(row.getSignIn()), setterTime));
+          row.setLateHours(TimesheetRow.lateHours(moment(row.getSignIn(), "YYYY/MM/DD HH:mm").format("YYYY/MM/DD HH:mm"), setterTime));
 
           this.timesheets.set(row);
           this.slack.send(this.template.render(
@@ -49,16 +52,17 @@ export default class CommandSignOut extends CommandAbstract{
 
           // 更新の場合は時間を明示する必要がある
           if (!time) {
+
               this.slack.send('今日はもう退勤してますよ');
               return;
           }
-          let setterTime = date.format('YYYY/MM/DD') + ' ' + time.format('HH:mm');
+          let setterTime = date.format('YYYY/MM/DD ') + moment(time, "HH:mm").format('HH:mm');
           let workedHours = TimesheetRow.workedHours(row.getSignIn(), setterTime, row.getRestTime());
 
           row.setSignOut(setterTime);
           row.setWorkedHours(workedHours <= 8 ? workedHours : "8");
           row.setOvertimeHours(TimesheetRow.overtimeHours(workedHours));
-          row.setLateHours(TimesheetRow.lateHours(moment(row.getSignIn()), setterTime));
+          row.setLateHours(TimesheetRow.lateHours(moment(row.getSignIn(), "YYYY/MM/DD HH:mm").format("YYYY/MM/DD HH:mm"), setterTime));
 
           this.timesheets.set(row);
           this.slack.send(this.template.render(

@@ -1,5 +1,5 @@
 import GSConfigure from './gs-configure';
-import GSTemplate from './gs-template';
+import GSTemplate from './template-strage-gs';
 import moment from 'moment';
 import _ from 'lodash';
 

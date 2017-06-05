@@ -12,7 +12,7 @@ export default class CommandSignIn extends CommandAbstract{
 
     if (!row.getSignIn() || row.getSignIn() === '-') {
 
-      let setterTime = time? (date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD'))+" "+time.format('HH:mm'): now.format('YYYY/MM/DD HH:mm');
+      let setterTime = time? (date? date.format('YYYY/MM/DD '): now.format('YYYY/MM/DD '))+moment(time,"HH:mm").format('HH:mm'): now.format('YYYY/MM/DD HH:mm');
 
       row.setSignIn(setterTime);
       row.setRestTime("1");
@@ -29,11 +29,11 @@ export default class CommandSignIn extends CommandAbstract{
         this.slack.send("今日はもう出勤してますよ");
         return;
       }
-      row.setSignIn(date.format('YYYY/MM/DD') + ' ' + time.format('HH:mm'));
+      row.setSignIn(date.format('YYYY/MM/DD ') + moment(time,"HH:mm").format('HH:mm'));
 
       this.timesheets.set(row);
       this.slack.send(this.template.render(
-          "出勤更新", username, date.format('YYYY/MM/DD') + ' ' + time.format('HH:mm')
+          "出勤更新", username, date.format('YYYY/MM/DD ') + moment(time,"HH:mm").format('HH:mm')
       ));
     }
 

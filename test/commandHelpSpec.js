@@ -1,4 +1,3 @@
-import chai from 'chai';
 import sinon from 'sinon';
 
 import Slack from '../src/Slack';
@@ -31,7 +30,7 @@ timesheetsの使い方：
 (例: 集計 :n.rashidov 2017/4)
 `;
 
-describe('HelpCommand', ()=> {
+describe('CommandHelpSpec', ()=> {
 
 
   it('should call slack send method with expected message', () => {

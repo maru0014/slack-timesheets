@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import TemplateStrage from "template-strage";
+import TemplateStrage from './template-strage';
 
 export default class TemplateStrageGs extends TemplateStrage{
 
@@ -7,7 +7,7 @@ export default class TemplateStrageGs extends TemplateStrage{
     // メッセージテンプレート設定
     this.sheet = spreadsheet.getSheetByName('_メッセージ');
     if(!this.sheet) {
-      this.sheet = this.createMessageSheet(spreadsheet);
+      this.sheet = TemplateStrageGs.createMessageSheet(spreadsheet);
     }
   }
 

@@ -21,7 +21,7 @@ export default class CommandNoRest extends CommandAbstract{
     this.commandTotal = new CommandTotal(slack, template, timesheets);
   }
 
-  execute(username, date, time) {
+  execute(username, date) {
 
     const now = moment();
     const row = this.timesheets.get(username, date? date: now);
@@ -39,7 +39,7 @@ export default class CommandNoRest extends CommandAbstract{
         "休憩なし", username, date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
       ));
 
-      this.commandTotal.execute(username, date, time);
+      this.commandTotal.execute(username, date);
 
     }
     else if ((row.getSignIn() && row.getSignIn() !== '-') && (!row.getSignOut() || row.getSignOut() === '-')) {
