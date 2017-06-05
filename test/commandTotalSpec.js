@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import moment from 'moment';
 
-import Slack from '../src/Slack';
+import Slack from '../src/slack';
 import CommandTotal from '../src/command/command-total';
 import Timesheets from '../src/gs-timesheets';
 import TimesheetRow from '../src/timesheet-row';
@@ -63,7 +63,7 @@ describe('CommandTotalSpec', ()=> {
   it('should call slack send method with expectedMessage and TotalHours template', () => {
     const date = moment("2017/06/01", "YYYY/MM/DD");
     const username = "tester";
-    const expectMessage = "Total worked hours";
+    const expectMessage = "Total worked hours in the given day";
 
     const row = new TimesheetRow(username, date, ["2017/06/01 00:00:00","2017/06/01 10:00:00","2017/06/01 23:00:00","","1","8","4","1"]);
     const slack = new Slack();

@@ -9,19 +9,19 @@ export default class CommandMonthTotal extends CommandAbstract{
 
   execute(username, date, time, body) {
 
-    var userReg = /:([^\s]+)/;
-    var user = userReg.exec(body);
+    let userReg = /:([^\s]+)/;
+    let user = userReg.exec(body);
     user = user[1];
 
-    var yearReg = /\d+(?=\/)/;
-    var year = yearReg.exec(body);
+    let yearReg = /\d+(?=\/)/;
+    let year = yearReg.exec(body);
     year = year[0];
 
-    var monthReg = /\d+$/;
-    var month = monthReg.exec(body);
+    let monthReg = /\d+$/;
+    let month = monthReg.exec(body);
     month = month[0]-1;
 
-    var calculateMonth = CommandMonthTotal._getMonthTotal(user, month, year, this.timesheets);
+    let calculateMonth = CommandMonthTotal._getMonthTotal(user, month, year, this.timesheets);
     this.slack.send(calculateMonth);
 
   }

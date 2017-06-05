@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import moment from 'moment';
 
-import Slack from '../src/Slack';
+import Slack from '../src/slack';
 import CommandSignOut from '../src/command/command-sign-out';
 import CommandTotal from '../src/command/command-total';
 import Timesheets from '../src/gs-timesheets';

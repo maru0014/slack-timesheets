@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 
-import Slack from '../src/Slack';
+import Slack from '../src/slack';
 import CommandHelp from '../src/command/command-help';
 
 

@@ -15,10 +15,14 @@ export default class CommandRestHours extends CommandAbstract{
    * @param template {GSTemplate}
    * @param timesheets {GSTimesheets}
    */
-  constructor(slack, template, timesheets) {
-    super(slack, template, timesheets);
+  constructor(slack, template, timesheets, commandTotal = null) {
+      super(slack, template, timesheets);
 
-    this.commandTotal = new CommandTotal(slack, template, timesheets);
+      if (commandTotal) {
+          this.commandTotal = commandTotal;
+      } else {
+          this.commandTotal = new CommandTotal(slack, template, timesheets);
+      }
   }
 
   execute(username, date, time, body) {
@@ -55,7 +59,7 @@ export default class CommandRestHours extends CommandAbstract{
         "なかぬけ", username, date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD'), restTime
       ));
 
-      this.commandTotal.execute(username, date, time);
+      this.commandTotal.execute(username, date);
 
     }
     else if ((row.getSignIn() && row.getSignIn() !== '-') && (!row.getSignOut() || row.getSignOut() === '-')) {

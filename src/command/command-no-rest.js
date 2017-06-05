@@ -15,10 +15,14 @@ export default class CommandNoRest extends CommandAbstract{
    * @param template {GSTemplate}
    * @param timesheets {GSTimesheets}
    */
-  constructor(slack, template, timesheets) {
+  constructor(slack, template, timesheets, commandTotal = null) {
     super(slack, template, timesheets);
 
-    this.commandTotal = new CommandTotal(slack, template, timesheets);
+    if (commandTotal) {
+        this.commandTotal = commandTotal;
+    } else {
+        this.commandTotal = new CommandTotal(slack, template, timesheets);
+    }
   }
 
   execute(username, date) {
