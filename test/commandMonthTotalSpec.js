@@ -3,11 +3,8 @@ import moment from 'moment';
 
 import Slack from '../src/slack';
 import CommandMonthTotal from '../src/command/command-month-total';
-import CommandTotal from '../src/command/command-total';
 import Timesheets from '../src/gs-timesheets';
 import TimesheetRow from '../src/timesheet-row';
-import Template from '../src/template';
-import TeplateStrageArray from '../src/template-strage-array';
 
 
 describe('CommandMonthTotalSpec', ()=> {
@@ -24,20 +21,18 @@ describe('CommandMonthTotalSpec', ()=> {
     const month = date.month();
     const actualMonth = month + 1;
 
-    const body = "集計 :n.rashidov "+date.year()+"/"+actualMonth;
+    const body = "集計 :tester "+date.year()+"/"+actualMonth;
 
     const mockTimesheets = sinon.mock(timesheets).expects('get').withArgs(username, date).onCall(0).returns(row);
     sinon.mock(timesheets).expects('set').withArgs(row);
+    sinon.mock(timesheets).expects('_getSheet').withArgs(username);
     const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);
 
     const command = new CommandMonthTotal(slack, null, timesheets);
 
-
-    const mockGetMonthTotal = sinon.mock(CommandMonthTotal).expects('_getMonthTotal').withArgs(username, month, year, timesheets);
     command.execute(username, date, null, body);
 
     mockSlack.verify();
     mockTimesheets.verify();
-    mockGetMonthTotal.verify();
   });
 });
