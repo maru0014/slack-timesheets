@@ -22,9 +22,8 @@ export default class GSTimesheets {
         { name: 'ノート' },
         { name: '休憩' },
         { name: '就業時間' },
-        { name: '累計' },
-        { name: '時間外ロード' },
-        { name: '深夜ロード' }
+        { name: '時間外労働' },
+        { name: '深夜労働' }
       ],
       properties: [
         { name: 'DayOff', value: '土,日', comment: '← 月,火,水みたいに入力してください。アカウント停止のためには「全部」と入れてください。'},
@@ -64,7 +63,6 @@ export default class GSTimesheets {
           sheet.getRange("B5:B").setNumberFormat("H:MM");
           sheet.getRange("C5:C").setNumberFormat("H:MM");
         }
-        //this.on("newUser", username);
       }
     }
 
@@ -139,56 +137,5 @@ export default class GSTimesheets {
       return self.get(username, date);
     });
   }
-
-  // 休みの曜日を数字で返す
-  getDayOff(username) {
-    var sheet = this._getSheet(username);
-    return DateUtils.parseWday(sheet.getRange("B2").getValue());
-  }
-
-  // １ヶ月分の集計
-  getMonthTotal(username, month, year) {
-    var matomeSheet = this._getSheet(username);
-    var lastRow = matomeSheet.getLastRow();
-    var matomeRange = "B5:B" + lastRow;
-    var matomeData = matomeSheet.getRange(matomeRange).getValues();
-    var firstDay = null;
-    var lastDay = 0;
-
-    var actualMonth = month+1;
-    var helperStringInit = username+"さんが"+year+"年"+actualMonth+"月には";
-    var helperStringFin = "時間働きました";
-
-    for (var i = 0; i < matomeData.length; i++) {
-      if (matomeData[i][0]){
-        if (matomeData[i][0].getMonth() == month && matomeData[i][0].getYear() == year) {
-          firstDay = i + 5;
-          break;
-        }
-      }
-    }
-    for (var j = matomeData.length-1; j >= 0; j--) {
-      if (matomeData[j][0]) {
-        if (matomeData[j][0].getMonth() == month && matomeData[j][0].getYear() == year) {
-          lastDay = j + 5;
-          break;
-        }
-      }
-    }
-
-    if (firstDay != null && lastDay != null) {
-      var hoursData = 0;
-      for (var n = firstDay; n <= lastDay; n++) {
-        if (matomeSheet.getRange("F"+n).getValue()) {
-          hoursData += parseFloat(matomeSheet.getRange("F"+n).getValue());
-        }
-      }
-      return helperStringInit+hoursData+helperStringFin;
-    }
-    else {
-      return helperStringInit+"出勤しませんでした";
-    }
-
-  };
 
 }

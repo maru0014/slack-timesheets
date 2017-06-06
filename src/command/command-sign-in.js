@@ -12,7 +12,7 @@ export default class CommandSignIn extends CommandAbstract{
 
     if (!row.getSignIn() || row.getSignIn() === '-') {
 
-      let setterTime = time? time.format('YYYY/MM/DD HH:mm'): now.format('YYYY/MM/DD HH:mm');
+      let setterTime = time? (date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD'))+" "+time.format('HH:mm'): now.format('YYYY/MM/DD HH:mm');
 
       row.setSignIn(setterTime);
       row.setRestTime("1");

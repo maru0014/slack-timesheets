@@ -6,7 +6,7 @@ import moment from 'moment';
 
 export default class CommandRestHours extends CommandAbstract{
   static match(body) {
-    return body.match(/なかぬけ/);
+    return body.match(/なかぬけ|中抜|休憩(?!なし)/);
   }
 
   /**
@@ -25,6 +25,9 @@ export default class CommandRestHours extends CommandAbstract{
 
     const now = moment();
     const row = this.timesheets.get(username, date? date: now);
+    body = String(body || "").toLowerCase().replace(/[Ａ-Ｚａ-ｚ０-９：／．]/g, function(s) {
+      return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+    });
 
     if (row.getSignIn() && row.getSignIn() !== '-' && row.getSignOut() && row.getSignOut() !== '-') {
       // find needed keyword in body and get a number to its left (eg 3.5時間　-> 3.5)
