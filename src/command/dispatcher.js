@@ -3,6 +3,8 @@ import CommandHelp from './command-help';
 import CommandSignIn from './command-sign-in';
 import CommandSignOut from './command-sign-out';
 import CommandTotal from "./command-total";
+import CommandNoRest from "./command-no-rest";
+import CommandRestHours from "./command-rest-hours";
 
 
 export default class Dispatcher {
@@ -31,6 +33,8 @@ export default class Dispatcher {
       CommandSignOut,
       CommandSignIn,
       CommandTotal,
+      CommandNoRest,
+      CommandRestHours,
       CommandHelp
     ];
 
@@ -38,7 +42,7 @@ export default class Dispatcher {
     commands.map((CommandClass) => {
       if (CommandClass.match(body)) {
         const command = new CommandClass(this.kernel.getSlack(), this.kernel.getTemplate(), this.kernel.getTimesheets());
-        command.execute(username, datetime.date, datetime.time);
+        command.execute(username, datetime.date, datetime.time, body);
       }
     });
 
