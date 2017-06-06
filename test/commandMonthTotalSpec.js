@@ -7,6 +7,14 @@ import Timesheets from '../src/gs-timesheets';
 import TimesheetRow from '../src/timesheet-row';
 
 
+class SheetMock {
+    getLastRow () {
+      return [
+
+      ];
+    }
+}
+
 describe('CommandMonthTotalSpec', ()=> {
   it('should call slack send method with expectMessage', () => {
     const date = moment("2017/06/01", "YYYY/MM/DD");
@@ -25,7 +33,7 @@ describe('CommandMonthTotalSpec', ()=> {
 
     const mockTimesheets = sinon.mock(timesheets).expects('get').withArgs(username, date).onCall(0).returns(row);
     sinon.mock(timesheets).expects('set').withArgs(row);
-    sinon.mock(timesheets).expects('_getSheet').withArgs(username);
+    sinon.mock(timesheets).expects('_getSheet').withArgs(username).return(new SheetMock());
     const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);
 
     const command = new CommandMonthTotal(slack, null, timesheets);
