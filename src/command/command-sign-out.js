@@ -1,5 +1,6 @@
 import CommandAbstract from './command-abstract';
 import CommandTotal from './command-total';
+import TimesheetRow from '../timesheet-row';
 
 import moment from 'moment';
 
@@ -22,25 +23,26 @@ export default class CommandSignOut extends CommandAbstract{
 
   execute(username, date, time) {
 
-
     const now = moment();
     const row = this.timesheets.get(username, date? date: now);
 
-
     if (!row.getSignOut() || row.getSignOut() === '-') {
 
+      let setterTime = time? date.format('YYYY/MM/DD')+" "+time.format('HH:mm'): now.format('YYYY/MM/DD HH:mm');
+      let workedHours = TimesheetRow.workedHours(row.getSignIn(), setterTime, row.getRestTime());
 
-      if (time) {
-        row.setSignOut(time.format('HH:mm'));
-      } else {
-        row.setSignOut(now.format('HH:mm'));
-      }
+      row.setSignOut(setterTime);
+      row.setWorkedHours( (workedHours<=8) ? workedHours : "8" );
+      row.setOvertimeHours( TimesheetRow.overtimeHours(workedHours) );
+      row.setLateHours( TimesheetRow.lateHours(moment(row.getSignIn()), setterTime) );
 
       this.timesheets.set(row);
       this.slack.send(this.template.render(
-        "退勤", username, date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
+        "退勤", username, setterTime
       ));
-      this.commandTotal.execute(username, date, time);
+
+      // this.commandTotal.execute(username, date, time);
+
     } else {
 
       // 更新の場合は時間を明示する必要がある
@@ -48,16 +50,21 @@ export default class CommandSignOut extends CommandAbstract{
         this.slack.send('今日はもう退勤してますよ');
         return;
       }
-      row.setSignOut(time.format('HH:mm'));
+      let setterTime = date.format('YYYY/MM/DD') + ' ' + time.format('HH:mm');
+      let workedHours = TimesheetRow.workedHours(row.getSignIn(), setterTime, row.getRestTime());
+
+      row.setSignOut(setterTime);
+      row.setWorkedHours( workedHours<=8? workedHours: "8" );
+      row.setOvertimeHours( TimesheetRow.overtimeHours(workedHours) );
+      row.setLateHours( TimesheetRow.lateHours(moment(row.getSignIn()), setterTime) );
 
       this.timesheets.set(row);
       this.slack.send(this.template.render(
-        "退勤更新", username, date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
+        "退勤更新", username, setterTime
       ));
-      this.commandTotal.execute(username, date, time);
+
+      // this.commandTotal.execute(username, date, time);
+
     }
-
-
-
   }
 }

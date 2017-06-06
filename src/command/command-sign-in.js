@@ -8,21 +8,18 @@ export default class CommandSignIn extends CommandAbstract{
   execute(username, date, time) {
 
     const now = moment();
-
     const row = this.timesheets.get(username, date? date: now);
 
     if (!row.getSignIn() || row.getSignIn() === '-') {
 
+      let setterTime = time? time.format('YYYY/MM/DD HH:mm'): now.format('YYYY/MM/DD HH:mm');
 
-      if (time) {
-        row.setSignIn(time.format('HH:mm'));
-      } else {
-        row.setSignIn(now.format('HH:mm'));
-      }
-
+      row.setSignIn(setterTime);
+      row.setRestTime("1");
       this.timesheets.set(row);
+
       this.slack.send(this.template.render(
-        "出勤", username, date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
+          "出勤", username, setterTime
       ));
 
     } else {
@@ -32,14 +29,13 @@ export default class CommandSignIn extends CommandAbstract{
         this.slack.send("今日はもう出勤してますよ");
         return;
       }
-      row.setSignIn(time.format('HH:mm'));
+      row.setSignIn(date.format('YYYY/MM/DD') + ' ' + time.format('HH:mm'));
 
       this.timesheets.set(row);
       this.slack.send(this.template.render(
-        "出勤更新", username, date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
+          "出勤更新", username, date.format('YYYY/MM/DD') + ' ' + time.format('HH:mm')
       ));
     }
-
 
   }
 }
