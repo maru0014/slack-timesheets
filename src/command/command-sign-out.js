@@ -30,9 +30,9 @@ export default class CommandSignOut extends CommandAbstract{
     const now = moment();
     const row = this.timesheets.get(username, date? date: now);
 
-    if (row.getSignIn() || row.getSignIn() === '-') {
+    if (row.getSignIn()) {
 
-      if (!row.getSignOut() || row.getSignOut() === '-') {
+      if (!row.getSignOut()) {
           let setterTime = time ? moment(date).format('YYYY/MM/DD ') + moment(time, "HH:mm").format('HH:mm') : now.format('YYYY/MM/DD HH:mm');
           let workedHours = TimesheetRow.workedHours(row.getSignIn(), setterTime, row.getRestTime());
 

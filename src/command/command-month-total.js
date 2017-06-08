@@ -28,18 +28,9 @@ export default class CommandMonthTotal extends CommandAbstract{
 
 
   static _getMonthTotal(username, month, year, timesheets) {
-    let matomeSheet = timesheets._getSheet(username, false);
-    let lastRow = matomeSheet.getLastRow();
-    let matomeRange = "B5:B" + lastRow;
-    let matomeData = matomeSheet.getRange(matomeRange).getValues();
-    let firstDay = null;
-    let lastDay = 0;
 
 
-    let signInCol = "B";
-    let workedHoursCol = "F";
-    let overtimeHoursCol = "G";
-    let lateHoursCol = "H";
+    const date = moment({year: year, month: month, day: 1});
 
     let actualMonth = month+1; //
     let helperStringInit = username+"さんが"+year+"年"+actualMonth+"月は";
@@ -49,53 +40,41 @@ export default class CommandMonthTotal extends CommandAbstract{
     let helperStringLateHours = "、深夜労働:";
     let helperStringFin = "働きました";
 
+    let totalWorkedHours = 0;
+    let totalOvertimeHours = 0;
+    let totalLateHours = 0;
 
-    for (let i = 0; i < matomeData.length; i++) {
-      if (matomeData[i][0]){
-        if (moment(matomeData[i][0]).month() == month && moment(matomeData[i][0]).year() == year) {
-          firstDay = i + 5;
-          break;
-        }
-      }
-    }
-    for (let j = matomeData.length-1; j >= 0; j--) {
-      if (matomeData[j][0]) {
-        if (moment(matomeData[j][0]).month() == month && moment(matomeData[j][0]).year() == year) {
-          lastDay = j + 5;
-          break;
-        }
-      }
-    }
+    while (date.month() == month) {
 
-    if (firstDay != null && lastDay != null) {
-      let totalWorkedHours = 0;
-      let totalOvertimeHours = 0;
-      let totalLateHours = 0;
+      const row = timesheets.get(username, date);
 
-      for (let n = firstDay; n <= lastDay; n++) {
-        let signInValue = matomeSheet.getRange(signInCol+n).getValue();
-        let workedHoursValue = matomeSheet.getRange(workedHoursCol+n).getValue();
 
-        if (signInValue && !workedHoursValue) {
-          return username+"さんが"+year+"年"+actualMonth+"月"+moment(signInValue).date()+"日に退勤してないです、直してください";
-        }
-
-        let _totalWorkedHours = parseFloat(workedHoursValue);
+      if (row && row.getSignIn()) {
+        const signIn = row.getSignIn();
+        let _totalWorkedHours = parseFloat(row.getWorkedHours());
         if (_totalWorkedHours) {
           totalWorkedHours += _totalWorkedHours;
         }
+        else {
+          return moment(signIn, 'YYYY/MM/DD HH:mm').format('YYYY/MM/DD')+"は退勤してないです";
+        }
 
-        let _totalOvertimeHours = parseFloat(matomeSheet.getRange(overtimeHoursCol + n).getValue());
+        let _totalOvertimeHours = parseFloat(row.getOvertimeHours());
         if (_totalOvertimeHours) {
           totalOvertimeHours += _totalOvertimeHours;
         }
 
-        let _totalLateHours = parseFloat(matomeSheet.getRange(lateHoursCol + n).getValue());
+        let _totalLateHours = parseFloat(row.getLateHours());
         if (_totalLateHours) {
           totalLateHours += _totalLateHours;
         }
+
       }
-      return helperStringInit+helperStringWorkedHours+totalWorkedHours+helperStringHour+helperStringOvertimeHours+totalOvertimeHours+helperStringHour+helperStringLateHours+totalLateHours+helperStringHour+helperStringFin;
+      date.add('1','days');
+
+    }
+    if (totalWorkedHours > 0) {
+      return helperStringInit + helperStringWorkedHours + totalWorkedHours + helperStringHour + helperStringOvertimeHours + totalOvertimeHours + helperStringHour + helperStringLateHours + totalLateHours + helperStringHour + helperStringFin;
     }
     else {
       return helperStringInit+"出勤しませんでした";

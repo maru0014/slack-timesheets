@@ -94,6 +94,11 @@ export default class GSTimesheets {
   get(username, date) {
     var sheet = this._getSheet(username);
     var rowNo = this._getRowNo(username, date);
+
+    if (rowNo <= 4) {
+      return null;
+    }
+
     var row = sheet.getRange("A"+rowNo+":"+String.fromCharCode(65 + this.scheme.columns.length - 1)+rowNo).getValues()[0].map(function(v) {
       return v === '' ? undefined : v;
     });
