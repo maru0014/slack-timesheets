@@ -86,7 +86,7 @@ describe('CommandRestHoursSpec', ()=> {
 
 
     const command = new CommandRestHours(slack, template, timesheets, commandTotal);
-    command.execute(username, date, null, body);
+    command.execute(username, date, body);
 
     mockSlack.verify();
     mockTimesheets.verify();

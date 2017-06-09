@@ -25,7 +25,7 @@ export default class CommandRestHours extends CommandAbstract{
       }
   }
 
-  execute(username, date, time, body) {
+  execute(username, date, body) {
 
     const now = moment();
     const row = this.timesheets.get(username, date? date: now);
