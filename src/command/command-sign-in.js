@@ -24,9 +24,10 @@ export default class CommandSignIn extends CommandAbstract{
 
     } else {
 
-      // 更新の場合は時間を明示する必要がある
       if (!time) {
-        this.slack.send("今日はもう出勤してますよ");
+        this.slack.send(this.template.render(
+          "alreadySignedin", date.format('YYYY/MM/DD')
+        ));
         return;
       }
       row.setSignIn(date.format('YYYY/MM/DD ') + moment(time,"HH:mm").format('HH:mm'));

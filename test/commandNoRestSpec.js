@@ -7,25 +7,27 @@ import CommandTotal from '../src/command/command-total';
 import Timesheets from '../src/gs-timesheets';
 import TimesheetRow from '../src/timesheet-row';
 import Template from '../src/template';
-import TeplateStrageArray from '../src/template-strage-array';
+import TemplateStrageArray from '../src/template-strage-array';
 
+
+const expectMessage = "sample string";
 
 describe('CommandNoRestSpec', ()=> {
 
 
-  it('should call slack send method with --didnt work on that day-- message', () => {
+  it('should call slack send method with **didnotSignin** template', () => {
     const date = moment("2017/06/01", "YYYY/MM/DD");
     const username = "tester";
-    const expectMessage = "@"+username+" "+date.format('YYYY/MM/DD')+"は出勤してません";
 
     const row = new TimesheetRow(username, date, ["2017/06/01 00:00:00","","","","","","",""]);
     const slack = new Slack();
     const timesheets = new Timesheets();
-    const templateStrage = new TeplateStrageArray();
+    const templateStrage = new TemplateStrageArray();
     const template = new Template(templateStrage);
 
     const mockTimesheets = sinon.mock(timesheets).expects('get').withArgs(username, date).onCall(0).returns(row);
     sinon.mock(timesheets).expects('set').withArgs(row);
+    const mockTemplate = sinon.mock(template).expects('render').withArgs( "didnotSignin", username, date.format("YYYY/MM/DD")).onCall(0).returns(expectMessage);
     const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);
 
 
@@ -34,22 +36,23 @@ describe('CommandNoRestSpec', ()=> {
 
     mockSlack.verify();
     mockTimesheets.verify();
+    mockTemplate.verify();
   });
 
 
-  it('should call slack send method with --run this command after signing out-- message', () => {
+  it('should call slack send method with **signoutFirst** template', () => {
     const date = moment("2017/06/01", "YYYY/MM/DD");
     const username = "tester";
-    const expectMessage = "@"+username+" "+date.format('YYYY/MM/DD')+"このコマンドを退勤してから実行してください";
 
     const row = new TimesheetRow(username, date, ["2017/06/01 00:00:00","2017/06/01 10:00:00","","","","","",""]);
     const slack = new Slack();
     const timesheets = new Timesheets();
-    const templateStrage = new TeplateStrageArray();
+    const templateStrage = new TemplateStrageArray();
     const template = new Template(templateStrage);
 
     const mockTimesheets = sinon.mock(timesheets).expects('get').withArgs(username, date).onCall(0).returns(row);
     sinon.mock(timesheets).expects('set').withArgs(row);
+    const mockTemplate = sinon.mock(template).expects('render').withArgs( "signoutFirst", date.format('YYYY/MM/DD') ).onCall(0).returns(expectMessage);
     const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);
 
 
@@ -58,18 +61,18 @@ describe('CommandNoRestSpec', ()=> {
 
     mockSlack.verify();
     mockTimesheets.verify();
+    mockTemplate.verify();
   });
 
 
-  it('should call slack send method with expectMessage and NoRest template', () => {
+  it('should call slack send method with **noRest** template', () => {
     const date = moment("2017/06/01", "YYYY/MM/DD");
     const username = "tester";
-    const expectMessage = "No rest time registered";
 
     const row = new TimesheetRow(username, date, ["2017/06/01 00:00:00","2017/06/01 10:00:00","2017/06/01 15:00:00","","1","4","",""]);
     const slack = new Slack();
     const timesheets = new Timesheets();
-    const templateStrage = new TeplateStrageArray();
+    const templateStrage = new TemplateStrageArray();
     const template = new Template(templateStrage);
 
     const commandTotal = new CommandTotal();

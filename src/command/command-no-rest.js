@@ -47,14 +47,14 @@ export default class CommandNoRest extends CommandAbstract{
 
     }
     else if ((row.getSignIn() && row.getSignIn() !== '-') && (!row.getSignOut() || row.getSignOut() === '-')) {
-      this.slack.send(
-        "@"+username+" "+(date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD'))+"このコマンドを退勤してから実行してください"
-      );
+      this.slack.send(this.template.render(
+        "signoutFirst", date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
+      ));
     }
     else {
-      this.slack.send(
-        "@"+username+" "+(date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD'))+"は出勤してません"
-      );
+      this.slack.send(this.template.render(
+        "didnotSignin", username, (date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD'))
+      ));
     }
   }
 }

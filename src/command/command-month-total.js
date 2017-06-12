@@ -21,24 +21,18 @@ export default class CommandMonthTotal extends CommandAbstract{
     let month = monthReg.exec(body);
     month = month[0]-1;
 
-    let calculateMonth = CommandMonthTotal._getMonthTotal(user, month, year, this.timesheets);
+    let calculateMonth = CommandMonthTotal._getMonthTotal(user, month, year, this.timesheets, this.template);
     this.slack.send(calculateMonth);
 
   }
 
 
-  static _getMonthTotal(username, month, year, timesheets) {
+  static _getMonthTotal(username, month, year, timesheets, template) {
 
 
     const date = moment({year: year, month: month, day: 1});
 
-    let actualMonth = month+1; //
-    let helperStringInit = username+"さんが"+year+"年"+actualMonth+"月は";
-    let helperStringHour = "時間";
-    let helperStringWorkedHours = "就業:";
-    let helperStringOvertimeHours = "、時間外労働:";
-    let helperStringLateHours = "、深夜労働:";
-    let helperStringFin = "働きました";
+    let actualMonth = month+1;
 
     let totalWorkedHours = 0;
     let totalOvertimeHours = 0;
@@ -56,7 +50,7 @@ export default class CommandMonthTotal extends CommandAbstract{
           totalWorkedHours += _totalWorkedHours;
         }
         else {
-          return moment(signIn, 'YYYY/MM/DD HH:mm').format('YYYY/MM/DD')+"は退勤してないです";
+          return template.render("didnotSignoutOn", username, moment(signIn, 'YYYY/MM/DD HH:mm').format('YYYY/MM/DD'));
         }
 
         let _totalOvertimeHours = parseFloat(row.getOvertimeHours());
@@ -74,10 +68,10 @@ export default class CommandMonthTotal extends CommandAbstract{
 
     }
     if (totalWorkedHours > 0) {
-      return helperStringInit + helperStringWorkedHours + totalWorkedHours + helperStringHour + helperStringOvertimeHours + totalOvertimeHours + helperStringHour + helperStringLateHours + totalLateHours + helperStringHour + helperStringFin;
+      return template.render("monthlyTotal", username, year+"/"+actualMonth, totalWorkedHours, totalOvertimeHours, totalLateHours);
     }
     else {
-      return helperStringInit+"出勤しませんでした";
+      return template.render("didnotWorkThatMonth", username, year+"/"+actualMonth);
     }
 
   }

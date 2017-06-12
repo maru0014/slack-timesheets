@@ -52,9 +52,10 @@ export default class CommandSignOut extends CommandAbstract{
 
           // 更新の場合は時間を明示する必要がある
           if (!time) {
-
-              this.slack.send('今日はもう退勤してますよ');
-              return;
+            this.slack.send(this.template.render(
+              "alreadySignedout", date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
+            ));
+            return;
           }
           let setterTime = date.format('YYYY/MM/DD ') + moment(time, "HH:mm").format('HH:mm');
           let workedHours = TimesheetRow.workedHours(row.getSignIn(), setterTime, row.getRestTime());
@@ -73,9 +74,10 @@ export default class CommandSignOut extends CommandAbstract{
 
       }
     }
-    else {this.slack.send(
-        "@" + username + "は今日まだ出勤押していません。出勤押してからまた退勤押してください"
-    );
+    else {
+      this.slack.send(this.template.render(
+        "signinFirst", date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
+      ));
     }
   }
 }

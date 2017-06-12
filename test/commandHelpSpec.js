@@ -1,46 +1,37 @@
 import sinon from 'sinon';
+import i18n from 'i18n';
 
 import Slack from '../src/slack';
 import CommandHelp from '../src/command/command-help';
+import Template from '../src/template';
+import TemplateStrageArray from '../src/template-strage-array';
 
 
 
-const expectMessage = `
-timesheetsの使い方：
-
-おはようございます 〜 今の時間で出勤登録
-
-おはようございます 10:00 〜 10時に出勤登録
-
-5/4は11:30に出勤しました 〜 5月4日の出勤時間を11:30で登録
-
-お疲れ様でした 〜 今の時間で退勤登録
-
-5/4は18:30に退勤しました 〜 5月4日の退勤時間を18:30で登録
-
-◯は△時間なかぬけでした 〜 ◯の休憩△時間追加
-
-今日は休憩なしでした 〜 今日の休憩を0時間に更新。注意：このコマンド打たないと休憩1時間を登録させます
-
-今日は休憩1.5時間 〜 今日の休憩を1.5時間に更新。
-
-◯は何時間働きましたか 〜 ◯に働いた時間と休憩時間を表示
-
-集計 :username year/month 〜 usernameのユーザーのyear年month月に働いた就業時間を表
-(例: 集計 :n.rashidov 2017/4)
-`;
+const expectMessage = "sample string";
 
 describe('CommandHelpSpec', ()=> {
+  // i18n.configure({
+  //   defaultLocale: 'ja',
+  //   directory: __dirname + '/../src/locales'
+  // });
+  //
+  // var greeting = i18n.__('Hello %s, how are you today?', 'nodir');
+  // console.log(greeting);
 
+  it('should call slack send method with **help** template', () => {
 
-  it('should call slack send method with expected message', () => {
     const slack = new Slack();
-    const mock = sinon.mock(slack).expects('send').once().withArgs(expectMessage);
+    const templateStrage = new TemplateStrageArray();
+    const template = new Template(templateStrage);
+
+    const mockTemplate = sinon.mock(template).expects('render').withArgs("help").onCall(0).returns(expectMessage);
+    const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);
 
 
-    const command = new CommandHelp(slack, null, null);
+    const command = new CommandHelp(slack, template, null);
     command.execute();
 
-    mock.verify();
+    mockSlack.verify();
   });
 });
