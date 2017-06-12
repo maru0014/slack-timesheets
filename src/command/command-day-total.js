@@ -2,7 +2,7 @@ import CommandAbstract from './command-abstract';
 
 import moment from 'moment';
 
-export default class CommandTotal extends CommandAbstract{
+export default class CommandDayTotal extends CommandAbstract{
   static match(body) {
     return body.match(/何時間働|勤務時間/);
   }
@@ -15,12 +15,12 @@ export default class CommandTotal extends CommandAbstract{
 
     if (row.getWorkedHours() && row.getWorkedHours() > 0) {
 
-      let restTime = row.getRestTime()? row.getRestTime(): "0";
-      let overtimeHours = row.getOvertimeHours()? row.getOvertimeHours(): "0";
-      let lateHours = row.getLateHours()? row.getLateHours(): "0";
+      const restTime = row.getRestTime()? row.getRestTime(): "0";
+      const overtimeHours = row.getOvertimeHours()? row.getOvertimeHours(): "0";
+      const lateHours = row.getLateHours()? row.getLateHours(): "0";
 
       this.slack.send(this.template.render(
-        "合計時間",
+        "dayTotal",
         username,
         date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD'),
         moment(row.getSignIn(), 'YYYY/MM/DD HH:mm').format("HH:mm"),
@@ -34,12 +34,12 @@ export default class CommandTotal extends CommandAbstract{
     else {
       if (row.getSignIn() && !row.getSignOut() ){
         this.slack.send(this.template.render(
-          "signoutFirst", date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
+          "signOutFirst", date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
         ));
       }
       else {
         this.slack.send(this.template.render(
-          "signinFirst", date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
+          "signInFirst", date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
         ));
       }
     }

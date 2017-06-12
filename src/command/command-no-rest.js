@@ -1,5 +1,5 @@
 import CommandAbstract from './command-abstract';
-import CommandTotal from './command-total';
+import CommandDayTotal from './command-day-total';
 import TimesheetRow from '../timesheet-row';
 
 import moment from 'moment';
@@ -15,13 +15,13 @@ export default class CommandNoRest extends CommandAbstract{
    * @param template {GSTemplate}
    * @param timesheets {GSTimesheets}
    */
-  constructor(slack, template, timesheets, commandTotal = null) {
+  constructor(slack, template, timesheets, commandDayTotal = null) {
     super(slack, template, timesheets);
 
-    if (commandTotal) {
-        this.commandTotal = commandTotal;
+    if (commandDayTotal) {
+        this.commandDayTotal = commandDayTotal;
     } else {
-        this.commandTotal = new CommandTotal(slack, template, timesheets);
+        this.commandDayTotal = new CommandDayTotal(slack, template, timesheets);
     }
   }
 
@@ -31,8 +31,8 @@ export default class CommandNoRest extends CommandAbstract{
     const row = this.timesheets.get(username, date? date: now);
 
     if (row.getSignIn() && row.getSignIn() !== '-' && row.getSignOut() && row.getSignOut() !== '-') {
-      let restTime = 0;
-      let workedHours = TimesheetRow.workedHours(row.getSignIn(), row.getSignOut(), restTime);
+      const restTime = 0;
+      const workedHours = TimesheetRow.workedHours(row.getSignIn(), row.getSignOut(), restTime);
 
       row.setRestTime(String(restTime));
       row.setWorkedHours( (workedHours<=8) ? workedHours : "8" );
@@ -40,20 +40,20 @@ export default class CommandNoRest extends CommandAbstract{
 
       this.timesheets.set(row);
       this.slack.send(this.template.render(
-        "休憩なし", username, date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
+        "noRest", username, date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
       ));
 
-      this.commandTotal.execute(username, date);
+      this.commandDayTotal.execute(username, date);
 
     }
     else if ((row.getSignIn() && row.getSignIn() !== '-') && (!row.getSignOut() || row.getSignOut() === '-')) {
       this.slack.send(this.template.render(
-        "signoutFirst", date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
+        "signOutFirst", date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
       ));
     }
     else {
       this.slack.send(this.template.render(
-        "didnotSignin", username, (date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD'))
+        "signInFirst", date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
       ));
     }
   }

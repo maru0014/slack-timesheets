@@ -12,19 +12,31 @@ import TemplateStrageArray from '../src/template-strage-array';
 const expectMessage = "sample string";
 
 describe('CommandMonthTotalSpec', ()=> {
+
+  let username,year,actualMonth,day,date,slack,timesheets,templateStrage,template, body;
+
+  beforeEach(() => {
+    username = "tester";
+
+    year = 2017;
+    actualMonth = 6;
+    day = 1;
+    date = moment({year: year, month: actualMonth-1, day: 1});
+
+    body = "集計 :"+username+" "+year+"/"+actualMonth;
+
+    slack = new Slack();
+    timesheets = new Timesheets();
+    templateStrage = new TemplateStrageArray();
+    template = new Template(templateStrage);
+  });
+
+
   it('should call slack send method with **didnotWorkThatMonth** template', () => {
-    const username = "tester";
-    const year = 2017;
-    const actualMonth = 6;
-    const body = "集計 :"+username+" "+year+"/"+actualMonth;
-    const date = moment({year: year, month: actualMonth-1, day: 1});
 
     const row = new TimesheetRow(username, date, ["","","","","","","",""]);
-    const slack = new Slack();
-    const timesheets = new Timesheets();
-    const templateStrage = new TemplateStrageArray();
-    const template = new Template(templateStrage);
-    let mockTimesheets = sinon.mock(timesheets).expects('get').atLeast(28).atMost(31)
+
+    const mockTimesheets = sinon.mock(timesheets).expects('get').atLeast(28).atMost(31)
       .onCall(0).returns(row)
       .onCall(1).returns(row)
       .onCall(2).returns(row)
@@ -57,9 +69,9 @@ describe('CommandMonthTotalSpec', ()=> {
       .onCall(29).returns(row);
     const mockTemplate = sinon.mock(template).expects('render').withArgs("didnotWorkThatMonth", username, year+"/"+actualMonth).onCall(0).returns(expectMessage);
 
-    const command = new CommandMonthTotal(slack, template, timesheets);
     const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);
 
+    const command = new CommandMonthTotal(slack, template, timesheets);
     command.execute(username, date, null, body);
 
     mockSlack.verify();
@@ -68,26 +80,17 @@ describe('CommandMonthTotalSpec', ()=> {
   });
 
 
-  it('should call slack send method with **didnotSignoutOn** template', () => {
-    const username = "tester";
-    const year = 2017;
-    const actualMonth = 6;
-    const body = "集計 :"+username+" "+year+"/"+actualMonth;
-    const date = moment({year: year, month: actualMonth-1, day: 1});
+  it('should call slack send method with **didnotSignOutOn** template', () => {
 
     const row = new TimesheetRow(username, date, [year+"/0"+actualMonth+"/01 00:00:00",year+"/0"+actualMonth+"/01 10:00:00","","","1","","",""]);
-    const slack = new Slack();
-    const timesheets = new Timesheets();
-    const templateStrage = new TemplateStrageArray();
-    const template = new Template(templateStrage);
-    let mockTimesheets = sinon.mock(timesheets).expects('get').once()
-      .onCall(0).returns(row);
     const signIn = row.getSignIn();
-    const mockTemplate = sinon.mock(template).expects('render').withArgs("didnotSignoutOn", username, moment(signIn, 'YYYY/MM/DD HH:mm').format('YYYY/MM/DD')).onCall(0).returns(expectMessage);
 
-    const command = new CommandMonthTotal(slack, template, timesheets);
+    const mockTimesheets = sinon.mock(timesheets).expects('get').once().onCall(0).returns(row);
+    const mockTemplate = sinon.mock(template).expects('render').withArgs("didnotSignOutOn", username, moment(signIn, 'YYYY/MM/DD HH:mm').format('YYYY/MM/DD')).onCall(0).returns(expectMessage);
+
     const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);
 
+    const command = new CommandMonthTotal(slack, template, timesheets);
     command.execute(username, date, null, body);
 
     mockSlack.verify();
@@ -96,20 +99,12 @@ describe('CommandMonthTotalSpec', ()=> {
   });
 
 
-  it('should call slack send method with **monthlyTotal** template', () => {
-    const username = "tester";
-    const year = 2017;
-    const actualMonth = 6;
-    const body = "集計 :"+username+" "+year+"/"+actualMonth;
-    const date = moment({year: year, month: actualMonth-1, day: 1});
+  it('should call slack send method with **monthTotal** template', () => {
 
     const row = new TimesheetRow(username, date, [year+"/0"+actualMonth+"/01 00:00:00",year+"/0"+actualMonth+"/01 10:00:00",year+"/0"+actualMonth+"/01 23:00:00","","1","8","4","1"]);
     const emptyRow = new TimesheetRow(username, date, ["","","","","","",""]);
-    const slack = new Slack();
-    const timesheets = new Timesheets();
-    const templateStrage = new TemplateStrageArray();
-    const template = new Template(templateStrage);
-    let mockTimesheets = sinon.mock(timesheets).expects('get').atLeast(28).atMost(31)
+
+    const mockTimesheets = sinon.mock(timesheets).expects('get').atLeast(28).atMost(31)
       .onCall(0).returns(row)
       .onCall(1).returns(emptyRow)
       .onCall(2).returns(emptyRow)
@@ -140,11 +135,11 @@ describe('CommandMonthTotalSpec', ()=> {
       .onCall(27).returns(emptyRow)
       .onCall(28).returns(emptyRow)
       .onCall(29).returns(emptyRow);
-    const mockTemplate = sinon.mock(template).expects('render').withArgs("monthlyTotal", username, year+"/"+actualMonth).onCall(0).returns(expectMessage);
+    const mockTemplate = sinon.mock(template).expects('render').withArgs("monthTotal", username, year+"/"+actualMonth).onCall(0).returns(expectMessage);
 
-    const command = new CommandMonthTotal(slack, template, timesheets);
     const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);
 
+    const command = new CommandMonthTotal(slack, template, timesheets);
     command.execute(username, date, null, body);
 
     mockSlack.verify();

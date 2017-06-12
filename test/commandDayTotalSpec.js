@@ -2,7 +2,6 @@ import sinon from 'sinon';
 import moment from 'moment';
 
 import Slack from '../src/slack';
-import CommandNoRest from '../src/command/command-no-rest';
 import CommandDayTotal from '../src/command/command-day-total';
 import Timesheets from '../src/gs-timesheets';
 import TimesheetRow from '../src/timesheet-row';
@@ -12,7 +11,7 @@ import TemplateStrageArray from '../src/template-strage-array';
 
 const expectMessage = "sample string";
 
-describe('CommandNoRestSpec', ()=> {
+describe('CommandDayTotalSpec', ()=> {
 
   let username,year,actualMonth,day,date,slack,timesheets,templateStrage,template;
 
@@ -30,18 +29,17 @@ describe('CommandNoRestSpec', ()=> {
     template = new Template(templateStrage);
   });
 
-
   it('should call slack send method with **signInFirst** template', () => {
 
-    const row = new TimesheetRow(username, date, ["2017/06/01 00:00:00","","","","","","",""]);
+    const row = new TimesheetRow(username, date, [year+"/"+actualMonth+"/"+day+" 00:00:00","","","","","","",""]);
 
     const mockTimesheets = sinon.mock(timesheets).expects('get').withArgs(username, date).onCall(0).returns(row);
     sinon.mock(timesheets).expects('set').withArgs(row);
-    const mockTemplate = sinon.mock(template).expects('render').withArgs( "signInFirst", date.format("YYYY/MM/DD")).onCall(0).returns(expectMessage);
+    const mockTemplate = sinon.mock(template).expects('render').withArgs("signInFirst", date.format('YYYY/MM/DD')).onCall(0).returns(expectMessage);
 
     const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);
 
-    const command = new CommandNoRest(slack, template, timesheets);
+    const command = new CommandDayTotal(slack, template, timesheets);
     command.execute(username, date);
 
     mockSlack.verify();
@@ -52,15 +50,15 @@ describe('CommandNoRestSpec', ()=> {
 
   it('should call slack send method with **signOutFirst** template', () => {
 
-    const row = new TimesheetRow(username, date, ["2017/06/01 00:00:00","2017/06/01 10:00:00","","","","","",""]);
+    const row = new TimesheetRow(username, date, [year+"/"+actualMonth+"/"+day+" 00:00:00",year+"/"+actualMonth+"/"+day+" 10:00:00","","","1","","",""]);
 
     const mockTimesheets = sinon.mock(timesheets).expects('get').withArgs(username, date).onCall(0).returns(row);
     sinon.mock(timesheets).expects('set').withArgs(row);
-    const mockTemplate = sinon.mock(template).expects('render').withArgs( "signOutFirst", date.format('YYYY/MM/DD') ).onCall(0).returns(expectMessage);
+    const mockTemplate = sinon.mock(template).expects('render').withArgs("signOutFirst", date.format('YYYY/MM/DD')).onCall(0).returns(expectMessage);
 
     const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);
 
-    const command = new CommandNoRest(slack, template, timesheets);
+    const command = new CommandDayTotal(slack, template, timesheets);
     command.execute(username, date);
 
     mockSlack.verify();
@@ -69,26 +67,35 @@ describe('CommandNoRestSpec', ()=> {
   });
 
 
-  it('should call slack send method with **noRest** template', () => {
+  it('should call slack send method with **dayTotal** template', () => {
 
-    const row = new TimesheetRow(username, date, ["2017/06/01 00:00:00","2017/06/01 10:00:00","2017/06/01 15:00:00","","1","4","",""]);
+    const row = new TimesheetRow(username, date, [year+"/"+actualMonth+"/"+day+" 00:00:00",year+"/"+actualMonth+"/"+day+" 10:00:00",year+"/"+actualMonth+"/"+day+" 23:00:00","","1","8","4","1"]);
 
-    const commandDayTotal = new CommandDayTotal();
+    let restTime = row.getRestTime()? row.getRestTime(): "0";
+    let overtimeHours = row.getOvertimeHours()? row.getOvertimeHours(): "0";
+    let lateHours = row.getLateHours()? row.getLateHours(): "0";
 
     const mockTimesheets = sinon.mock(timesheets).expects('get').withArgs(username, date).onCall(0).returns(row);
     sinon.mock(timesheets).expects('set').withArgs(row);
-    const mockTemplate = sinon.mock(template).expects('render').withArgs( "noRest", username, date.format("YYYY/MM/DD")).onCall(0).returns(expectMessage);
-
-    const mockCommandDayTotal = sinon.mock(commandDayTotal).expects('execute').withArgs(username,date);
+    const mockTemplate = sinon.mock(template).expects('render').withArgs(
+      "dayTotal",
+      username,
+      date.format("YYYY/MM/DD"),
+      moment(row.getSignIn(), 'YYYY/MM/DD HH:mm').format("HH:mm"),
+      moment(row.getSignOut(), 'YYYY/MM/DD HH:mm').format("HH:mm"),
+      row.getWorkedHours(),
+      restTime,
+      overtimeHours,
+      lateHours
+    ).onCall(0).returns(expectMessage);
 
     const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);
 
-    const command = new CommandNoRest(slack, template, timesheets, commandDayTotal);
+    const command = new CommandDayTotal(slack, template, timesheets);
     command.execute(username, date);
 
     mockSlack.verify();
     mockTimesheets.verify();
     mockTemplate.verify();
-    mockCommandDayTotal.verify();
   });
 });

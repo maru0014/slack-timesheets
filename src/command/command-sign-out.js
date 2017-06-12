@@ -1,5 +1,5 @@
 import CommandAbstract from './command-abstract';
-import CommandTotal from './command-total';
+import CommandDayTotal from './command-day-total';
 import TimesheetRow from '../timesheet-row';
 
 import moment from 'moment';
@@ -15,13 +15,13 @@ export default class CommandSignOut extends CommandAbstract{
    * @param template {GSTemplate}
    * @param timesheets {GSTimesheets}
    */
-  constructor(slack, template, timesheets, commandTotal = null) {
+  constructor(slack, template, timesheets, commandDayTotal = null) {
     super(slack, template, timesheets);
 
-    if (commandTotal) {
-      this.commandTotal = commandTotal;
+    if (commandDayTotal) {
+      this.commandDayTotal = commandDayTotal;
     } else {
-      this.commandTotal = new CommandTotal(slack, template, timesheets);
+      this.commandDayTotal = new CommandDayTotal(slack, template, timesheets);
     }
   }
 
@@ -33,8 +33,8 @@ export default class CommandSignOut extends CommandAbstract{
     if (row.getSignIn()) {
 
       if (!row.getSignOut()) {
-          let setterTime = time ? moment(date).format('YYYY/MM/DD ') + moment(time, "HH:mm").format('HH:mm') : now.format('YYYY/MM/DD HH:mm');
-          let workedHours = TimesheetRow.workedHours(row.getSignIn(), setterTime, row.getRestTime());
+          const setterTime = time ? (date? date.format('YYYY/MM/DD '): now.format('YYYY/MM/DD ')) + moment(time, "HH:mm").format('HH:mm') : now.format('YYYY/MM/DD HH:mm');
+          const workedHours = TimesheetRow.workedHours(row.getSignIn(), setterTime, row.getRestTime());
 
           row.setSignOut(setterTime);
           row.setWorkedHours((workedHours <= 8) ? workedHours : "8");
@@ -43,22 +43,21 @@ export default class CommandSignOut extends CommandAbstract{
 
           this.timesheets.set(row);
           this.slack.send(this.template.render(
-              "退勤", username, setterTime
+              "signOut", username, setterTime
           ));
 
-          this.commandTotal.execute(username, date, time);
+          this.commandDayTotal.execute(username, date, time);
 
       } else {
 
-          // 更新の場合は時間を明示する必要がある
           if (!time) {
             this.slack.send(this.template.render(
-              "alreadySignedout", date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
+              "alreadySignedOut", date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
             ));
             return;
           }
-          let setterTime = date.format('YYYY/MM/DD ') + moment(time, "HH:mm").format('HH:mm');
-          let workedHours = TimesheetRow.workedHours(row.getSignIn(), setterTime, row.getRestTime());
+          const setterTime = (date? date.format('YYYY/MM/DD '): now.format('YYYY/MM/DD ')) + moment(time, "HH:mm").format('HH:mm');
+          const workedHours = TimesheetRow.workedHours(row.getSignIn(), setterTime, row.getRestTime());
 
           row.setSignOut(setterTime);
           row.setWorkedHours(workedHours <= 8 ? workedHours : "8");
@@ -67,16 +66,16 @@ export default class CommandSignOut extends CommandAbstract{
 
           this.timesheets.set(row);
           this.slack.send(this.template.render(
-              "退勤更新", username, setterTime
+              "signOutUpdate", username, setterTime
           ));
 
-          this.commandTotal.execute(username, date, time);
+          this.commandDayTotal.execute(username, date, time);
 
       }
     }
     else {
       this.slack.send(this.template.render(
-        "signinFirst", date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
+        "signInFirst", date? date.format('YYYY/MM/DD'): now.format('YYYY/MM/DD')
       ));
     }
   }

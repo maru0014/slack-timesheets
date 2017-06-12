@@ -11,6 +11,16 @@ import TemplateStrageArray from '../src/template-strage-array';
 const expectMessage = "sample string";
 
 describe('CommandHelpSpec', ()=> {
+
+  let slack,templateStrage,template;
+
+  beforeEach(() => {
+
+    slack = new Slack();
+    templateStrage = new TemplateStrageArray();
+    template = new Template(templateStrage);
+  });
+
   // i18n.configure({
   //   defaultLocale: 'ja',
   //   directory: __dirname + '/../src/locales'
@@ -21,17 +31,14 @@ describe('CommandHelpSpec', ()=> {
 
   it('should call slack send method with **help** template', () => {
 
-    const slack = new Slack();
-    const templateStrage = new TemplateStrageArray();
-    const template = new Template(templateStrage);
-
     const mockTemplate = sinon.mock(template).expects('render').withArgs("help").onCall(0).returns(expectMessage);
-    const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);
 
+    const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);
 
     const command = new CommandHelp(slack, template, null);
     command.execute();
 
     mockSlack.verify();
+    mockTemplate.verify();
   });
 });

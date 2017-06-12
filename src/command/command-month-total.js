@@ -9,19 +9,19 @@ export default class CommandMonthTotal extends CommandAbstract{
 
   execute(username, date, time, body) {
 
-    let userReg = /:([^\s]+)/;
+    const userReg = /:([^\s]+)/;
     let user = userReg.exec(body);
     user = user[1];
 
-    let yearReg = /\d+(?=\/)/;
+    const yearReg = /\d+(?=\/)/;
     let year = yearReg.exec(body);
     year = year[0];
 
-    let monthReg = /\d+$/;
+    const monthReg = /\d+$/;
     let month = monthReg.exec(body);
     month = month[0]-1;
 
-    let calculateMonth = CommandMonthTotal._getMonthTotal(user, month, year, this.timesheets, this.template);
+    const calculateMonth = CommandMonthTotal._getMonthTotal(user, month, year, this.timesheets, this.template);
     this.slack.send(calculateMonth);
 
   }
@@ -32,7 +32,7 @@ export default class CommandMonthTotal extends CommandAbstract{
 
     const date = moment({year: year, month: month, day: 1});
 
-    let actualMonth = month+1;
+    const actualMonth = month+1;
 
     let totalWorkedHours = 0;
     let totalOvertimeHours = 0;
@@ -45,20 +45,20 @@ export default class CommandMonthTotal extends CommandAbstract{
 
       if (row && row.getSignIn()) {
         const signIn = row.getSignIn();
-        let _totalWorkedHours = parseFloat(row.getWorkedHours());
+        const _totalWorkedHours = parseFloat(row.getWorkedHours());
         if (_totalWorkedHours) {
           totalWorkedHours += _totalWorkedHours;
         }
         else {
-          return template.render("didnotSignoutOn", username, moment(signIn, 'YYYY/MM/DD HH:mm').format('YYYY/MM/DD'));
+          return template.render("didnotSignOutOn", username, moment(signIn, 'YYYY/MM/DD HH:mm').format('YYYY/MM/DD'));
         }
 
-        let _totalOvertimeHours = parseFloat(row.getOvertimeHours());
+        const _totalOvertimeHours = parseFloat(row.getOvertimeHours());
         if (_totalOvertimeHours) {
           totalOvertimeHours += _totalOvertimeHours;
         }
 
-        let _totalLateHours = parseFloat(row.getLateHours());
+        const _totalLateHours = parseFloat(row.getLateHours());
         if (_totalLateHours) {
           totalLateHours += _totalLateHours;
         }
@@ -68,7 +68,7 @@ export default class CommandMonthTotal extends CommandAbstract{
 
     }
     if (totalWorkedHours > 0) {
-      return template.render("monthlyTotal", username, year+"/"+actualMonth, totalWorkedHours, totalOvertimeHours, totalLateHours);
+      return template.render("monthTotal", username, year+"/"+actualMonth, totalWorkedHours, totalOvertimeHours, totalLateHours);
     }
     else {
       return template.render("didnotWorkThatMonth", username, year+"/"+actualMonth);
