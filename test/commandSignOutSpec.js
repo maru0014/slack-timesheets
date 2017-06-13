@@ -35,7 +35,7 @@ describe('CommandSignOutSpec', ()=> {
 
     const time = "19:00";
 
-    const row = new TimesheetRow(username, date, ["2017/06/01 00:00:00","","","","","","",""]);
+    const row = new TimesheetRow(username, date, [year+"/"+actualMonth+"/"+day+" 00:00:00","","","","","","",""]);
 
     const mockTimesheets = sinon.mock(timesheets).expects('get').withArgs(username, date).onCall(0).returns(row);
     sinon.mock(timesheets).expects('set').withArgs(row);
@@ -54,7 +54,7 @@ describe('CommandSignOutSpec', ()=> {
 
   it('should call slack send method with **alreadySignedOut** template', () => {
 
-    const row = new TimesheetRow(username, date, ["2017/06/01 00:00:00","2017/06/01 10:00:00","2017/06/01 19:00:00","","1","8","",""]);
+    const row = new TimesheetRow(username, date, [year+"/"+actualMonth+"/"+day+" 00:00:00",year+"/"+actualMonth+"/"+day+" 10:00:00",year+"/"+actualMonth+"/"+day+" 19:00:00","","1","8","",""]);
 
     const mockTimesheets = sinon.mock(timesheets).expects('get').withArgs(username, date).onCall(0).returns(row);
     sinon.mock(timesheets).expects('set').withArgs(row);
@@ -75,7 +75,7 @@ describe('CommandSignOutSpec', ()=> {
 
     const time = "19:00";
 
-    const row = new TimesheetRow(username, date, ["2017/06/01 00:00:00","2017/06/01 10:00:00","","","1","","",""]);
+    const row = new TimesheetRow(username, date, [year+"/"+actualMonth+"/"+day+" 00:00:00",year+"/"+actualMonth+"/"+day+" 10:00:00","","","1","","",""]);
 
     const commandDayTotal = new CommandDayTotal();
 
@@ -102,7 +102,7 @@ describe('CommandSignOutSpec', ()=> {
 
     const time = "20:00";
 
-    const row = new TimesheetRow(username, date, ["2017/06/01 00:00:00","2017/06/01 10:00:00","2017/06/01 19:00:00","","1","8","",""]);
+    const row = new TimesheetRow(username, date, [year+"/"+actualMonth+"/"+day+" 00:00:00",year+"/"+actualMonth+"/"+day+" 10:00:00",year+"/"+actualMonth+"/"+day+" 19:00:00","","1","8","",""]);
 
     const commandDayTotal = new CommandDayTotal();
 

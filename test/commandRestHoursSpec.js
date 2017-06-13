@@ -33,7 +33,7 @@ describe('CommandRestHoursSpec', ()=> {
 
   it('should call slack send method with **signInFirst** template', () => {
 
-    const row = new TimesheetRow(username, date, ["2017/06/01 00:00:00","","","","","","",""]);
+    const row = new TimesheetRow(username, date, [year+"/"+actualMonth+"/"+day+" 00:00:00","","","","","","",""]);
 
     const mockTimesheets = sinon.mock(timesheets).expects('get').withArgs(username, date).onCall(0).returns(row);
     sinon.mock(timesheets).expects('set').withArgs(row);
@@ -52,7 +52,7 @@ describe('CommandRestHoursSpec', ()=> {
 
   it('should call slack send method with **signOutFirst** template', () => {
 
-    const row = new TimesheetRow(username, date, ["2017/06/01 00:00:00","2017/06/01 10:00:00","","","","","",""]);
+    const row = new TimesheetRow(username, date, [year+"/"+actualMonth+"/"+day+" 00:00:00",year+"/"+actualMonth+"/"+day+" 10:00:00","","","","","",""]);
 
     const mockTimesheets = sinon.mock(timesheets).expects('get').withArgs(username, date).onCall(0).returns(row);
     sinon.mock(timesheets).expects('set').withArgs(row);
@@ -71,7 +71,7 @@ describe('CommandRestHoursSpec', ()=> {
 
   it('should call slack send method with **restHours** template', () => {
 
-    const row = new TimesheetRow(username, date, ["2017/06/01 00:00:00","2017/06/01 10:00:00","2017/06/01 15:00:00","","1","4","",""]);
+    const row = new TimesheetRow(username, date, [year+"/"+actualMonth+"/"+day+" 00:00:00",year+"/"+actualMonth+"/"+day+" 10:00:00",year+"/"+actualMonth+"/"+day+" 15:00:00","","1","4","",""]);
 
     const commandDayTotal = new CommandDayTotal();
 

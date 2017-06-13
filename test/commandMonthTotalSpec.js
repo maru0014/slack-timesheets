@@ -82,7 +82,7 @@ describe('CommandMonthTotalSpec', ()=> {
 
   it('should call slack send method with **didnotSignOutOn** template', () => {
 
-    const row = new TimesheetRow(username, date, [year+"/0"+actualMonth+"/01 00:00:00",year+"/0"+actualMonth+"/01 10:00:00","","","1","","",""]);
+    const row = new TimesheetRow(username, date, [year+"/"+actualMonth+"/"+day+" 00:00:00",year+"/0"+actualMonth+"/01 10:00:00","","","1","","",""]);
     const signIn = row.getSignIn();
 
     const mockTimesheets = sinon.mock(timesheets).expects('get').once().onCall(0).returns(row);
@@ -101,7 +101,7 @@ describe('CommandMonthTotalSpec', ()=> {
 
   it('should call slack send method with **monthTotal** template', () => {
 
-    const row = new TimesheetRow(username, date, [year+"/0"+actualMonth+"/01 00:00:00",year+"/0"+actualMonth+"/01 10:00:00",year+"/0"+actualMonth+"/01 23:00:00","","1","8","4","1"]);
+    const row = new TimesheetRow(username, date, [year+"/"+actualMonth+"/"+day+" 00:00:00",year+"/0"+actualMonth+"/01 10:00:00",year+"/0"+actualMonth+"/01 23:00:00","","1","8","4","1"]);
     const emptyRow = new TimesheetRow(username, date, ["","","","","","",""]);
 
     const mockTimesheets = sinon.mock(timesheets).expects('get').atLeast(28).atMost(31)
