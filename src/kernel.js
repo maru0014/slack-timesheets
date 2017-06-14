@@ -6,6 +6,7 @@ import GSTimesheets from './gs-timesheets';
 import Template from './template';
 import TemplateStrageGs from './template-strage-gs';
 import HelpCommand from './command/command-help';
+import I18n from './i18n';
 
 export default class Kernel {
     constructor() {
@@ -13,6 +14,8 @@ export default class Kernel {
 
     boot(properties = new GASProperties()) {
         const spreadsheetId = properties.get('spreadsheet');
+        const locale = properties.get('locale');
+        this.i18n = new I18n(locale? locale: 'en');
         if(spreadsheetId) {
             const spreadsheet = SpreadsheetApp.openById(spreadsheetId);
             if (spreadsheet) {
@@ -23,13 +26,15 @@ export default class Kernel {
                 );
 
 
-                this.template = new Template(new TemplateStrageGs(spreadsheet));
+                this.template = new Template(new TemplateStrageGs(spreadsheet, this.i18n));
 
                 // this.template = new GSTemplate(spreadsheet);
                 this.timesheets = new GSTimesheets(spreadsheet, this.configure);
                 return true;
 
             }
+
+
             // var template = new GSTemplate(spreadsheet);
             // var slack = new Slack(settings.get('Slack Incoming URL'), template, settings);
             // var storage = new GSTimesheets(spreadsheet, settings);
@@ -74,4 +79,11 @@ export default class Kernel {
         return this.timesheets;
     }
 
+    /**
+     *
+     * @returns {I18n}
+     */
+    getI18n() {
+        return this.i18n;
+    }
 }
