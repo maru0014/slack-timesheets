@@ -24,6 +24,9 @@ describe('CommandHelpSpec', ()=> {
 
 
   it('should call slack send method with **help** template', () => {
+
+      let i18n = new I18n('template');
+      console.log(i18n.__("signIn"));
     const mockTemplate = sinon.mock(template).expects('render').withArgs("help").onCall(0).returns(expectMessage);
 
     const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);

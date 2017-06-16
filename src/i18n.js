@@ -1,15 +1,13 @@
 import resourceEn from './locales/en';
 import resourceJa from './locales/ja';
+import i18next from 'i18next';
 
 
 export default class I18n {
-  constructor(locale, namespace) {
-    this.locale = locale;
-
-    var i18next = require('i18next').default;
+  constructor(namespace) {
     i18next
       .init({
-        lng: locale,
+        lng: "en",
         resources: {
           en: resourceEn,
           ja: resourceJa

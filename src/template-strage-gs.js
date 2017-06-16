@@ -5,6 +5,7 @@ import TemplateStrage from './template-strage';
 export default class TemplateStrageGs extends TemplateStrage{
 
   constructor(spreadsheet) {
+    super();
     // メッセージテンプレート設定
     this.sheet = spreadsheet.getSheetByName('_メッセージ');
     if(!this.sheet) {
@@ -18,7 +19,6 @@ export default class TemplateStrageGs extends TemplateStrage{
       throw "エラー: メッセージシートを作れませんでした";
     }
 
-    i18n = new I18n('en', 'common');
 
     sheet.getRange("A1:O2").setValues([
       [
