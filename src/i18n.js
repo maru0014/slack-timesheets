@@ -1,24 +1,17 @@
-import resourceEn from './locales/en';
-import resourceJa from './locales/ja';
-import i18next from 'i18next';
+import resourceFile from './locales/en';
+import Polyglot from 'node-polyglot';
 
+const polyglot = new Polyglot({phrases: resourceFile});
 
 export default class I18n {
-  constructor(namespace) {
-    i18next
-      .init({
-        lng: "en",
-        resources: {
-          en: resourceEn,
-          ja: resourceJa
-        },
-        defaultNS: namespace,
-      })
-    ;
+  constructor(locale) {
+    locale = locale? locale: "en";
+
+    polyglot.locale(locale);
 
   }
 
   __(key) {
-    return i18next.t(key);
+    return polyglot.t(key);
   }
 }

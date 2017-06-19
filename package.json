@@ -8,10 +8,9 @@
     "test": "tests"
   },
   "dependencies": {
-    "i18n": "^0.8.3",
-    "i18next": "^8.4.2",
     "lodash": "^4.17.4",
-    "moment": "^2.18.1"
+    "moment": "^2.18.1",
+    "node-polyglot": "^2.2.2"
   },
   "devDependencies": {
     "babel": "^6.23.0",
