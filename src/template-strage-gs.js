@@ -2,7 +2,6 @@ import _ from 'lodash';
 import I18n from './i18n';
 import TemplateStrage from './template-strage';
 
-const i18n = new I18n("en");
 export default class TemplateStrageGs extends TemplateStrage{
 
   constructor(spreadsheet) {
@@ -40,7 +39,7 @@ export default class TemplateStrageGs extends TemplateStrage{
         "help"
       ],
       [
-        i18n.__('template.signIn'),
+        "<@#1> 出勤時間を#2へ変更しました",
         "<@#1> 出勤時間を#2へ変更しました",
         "<@#1> お疲れ様でした (#2)",
         "<@#1> 退勤時間を#2へ変更しました",

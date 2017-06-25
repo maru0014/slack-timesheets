@@ -1,17 +1,24 @@
-import resourceFile from './locales/en';
 import Polyglot from 'node-polyglot';
 
-const polyglot = new Polyglot({phrases: resourceFile});
+import resourceEn from './locales/en';
+import resourceJa from './locales/ja';
+import Configure from './gs-configure';
+import Kernel from './kernel';
+
 
 export default class I18n {
-  constructor(locale) {
-    locale = locale? locale: "en";
-
-    polyglot.locale(locale);
-
+  constructor() {
+    const kernel = new Kernel();
+    const language = kernel.getLocale();
+    console.warn(language);
+    this.polyglot = {
+      en: new Polyglot({phrases: resourceEn, locale: 'en'}),
+      // ru: new Polyglot({ phrases: resourceRu, locale: 'ru' }),
+      ja: new Polyglot({phrases: resourceJa, locale: 'ja'}),
+    }[language];
   }
 
-  __(key) {
-    return polyglot.t(key);
+  __(key, options = null) {
+    return this.polyglot.t(key, options);
   }
 }

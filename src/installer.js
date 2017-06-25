@@ -10,28 +10,30 @@ export default class Installer {
   install(properties) {
 
     // タイムシートを作る
-    var spreadsheet = SpreadsheetApp.create("Xearts Slack Timesheets");
+    const spreadsheet = SpreadsheetApp.create("Xearts Slack Timesheets");
     properties.set('spreadsheet', spreadsheet.getId());
 
-    var sheets = spreadsheet.getSheets();
-    if (sheets.length == 1 && sheets[0].getLastRow() == 0) {
+    const sheets = spreadsheet.getSheets();
+    if (sheets.length === 1 && sheets[0].getLastRow() === 0) {
       sheets[0].setName('_設定');
     }
 
-    var configure = new GSConfigure(spreadsheet);
+    const configure = new GSConfigure(spreadsheet);
     configure.set('Slack Incoming URL', '');
     configure.setNote('Slack Incoming URL', 'Slackのincoming URLを入力してください');
     configure.set('開始日', moment().format("YYYY-MM-DD"));
     configure.setNote('開始日', '変更はしないでください');
     configure.set('無視するユーザ', 'miyamoto,hubot,slackbot,incoming-webhook');
     configure.setNote('無視するユーザ', '反応をしないユーザを,区切りで設定する。botは必ず指定してください。');
+    configure.set('Language', 'en');
+    configure.setNote('Language', 'Please dont change the language setting manujally. Run a command in slack instead');
 
     // 休日を設定 (iCal)
-    var calendarId = 'ja.japanese#holiday@group.v.calendar.google.com';
-    var calendar = CalendarApp.getCalendarById(calendarId);
-    var startDate = moment().toDate();
-    var endDate = moment().add('years', 1).toDate();
-    var holidays = _.map(calendar.getEvents(startDate, endDate), function (ev) {
+    const calendarId = 'ja.japanese#holiday@group.v.calendar.google.com';
+    const calendar = CalendarApp.getCalendarById(calendarId);
+    const startDate = moment().toDate();
+    const endDate = moment().add('years', 1).toDate();
+    const holidays = _.map(calendar.getEvents(startDate, endDate), function (ev) {
       return moment(ev.getAllDayStartDate()).format("YYYY-MM-DD");
     });
     configure.set('休日', holidays.join(', '));

@@ -5,7 +5,6 @@ import GSTemplate from './template';
 import GSTimesheets from './gs-timesheets';
 import Template from './template';
 import TemplateStrageGs from './template-strage-gs';
-import HelpCommand from './command/command-help';
 import I18n from './i18n';
 
 export default class Kernel {
@@ -14,36 +13,21 @@ export default class Kernel {
 
     boot(properties = new GASProperties()) {
         const spreadsheetId = properties.get('spreadsheet');
-        const locale = properties.get('locale');
-        this.i18n = new I18n(locale? locale: 'en');
         if(spreadsheetId) {
             const spreadsheet = SpreadsheetApp.openById(spreadsheetId);
             if (spreadsheet) {
-                this.configure = new GSConfigure(spreadsheet);
                 this.slack = new Slack(
                     this.configure.get('Slack Incoming URL'),
                     this.configure.get('無視するユーザ')
                 );
+                this.locale = this.configure.get("Language");
 
 
                 this.template = new Template(new TemplateStrageGs(spreadsheet, this.i18n));
-
-                // this.template = new GSTemplate(spreadsheet);
                 this.timesheets = new GSTimesheets(spreadsheet, this.configure);
                 return true;
 
             }
-
-
-            // var template = new GSTemplate(spreadsheet);
-            // var slack = new Slack(settings.get('Slack Incoming URL'), template, settings);
-            // var storage = new GSTimesheets(spreadsheet, settings);
-            // var timesheets = new Timesheets(storage, settings, slack);
-            // return({
-            //     receiver: slack,
-            //     timesheets: timesheets,
-            //     storage: storage
-            // });
         }
         return false;
     }
@@ -83,7 +67,7 @@ export default class Kernel {
      *
      * @returns {I18n}
      */
-    getI18n() {
-        return this.i18n;
+    getLocale() {
+        return this.locale;
     }
 }

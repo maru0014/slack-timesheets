@@ -2,10 +2,10 @@ import _ from 'lodash';
 import moment from 'moment';
 
 
-const SHEET_NAME = '_設定';
 
 export default class GSConfigure {
   constructor (spreadsheet) {
+    const SHEET_NAME = '_設定';
     this.sheet = spreadsheet.getSheetByName(SHEET_NAME);
     if(!this.sheet) {
       this.sheet = spreadsheet.insertSheet(SHEET_NAME);

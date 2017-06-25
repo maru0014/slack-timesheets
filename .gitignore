@@ -7,3 +7,4 @@ main.gs
 /gapps.config.json
 /client_secret.json
 /dist/main.js
+npm-debug.log

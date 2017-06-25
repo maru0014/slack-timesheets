@@ -1,4 +1,4 @@
-const res = {
+export default {
   template: {
     "signIn":"Hello, <@#1>! Signed you in (#2)",
     "signInUpdate":"<@#1> Sign-in time changed to #2",
@@ -14,5 +14,4 @@ const res = {
   common: {
     "key": "hello worldz"
   }
-};
-export default res;
+}
