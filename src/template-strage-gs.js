@@ -40,12 +40,14 @@ export default class TemplateStrageGs extends TemplateStrage {
     let columnNumber = 'B'.charCodeAt(0); // char into number (B -> 66)
 
     for (let i = columnNumber; i < columnNumber + localesSize; i++) {
+      const setLang = _.keys(locales)[i - columnNumber];
+      const templateWithLocale = locales[setLang]["template"];
       const column = String.fromCharCode(i);
-      sheet.getRange(column + '1').setValue(_.keys(locales)[i - columnNumber]);
+      sheet.getRange(column + '1').setValue(setLang);
       for (let j = keyRangeFirst; j <= keyRangeLast; j++) {
         const label = sheet.getRange('A' + j).getValue();
         sheet.getRange(String.fromCharCode(i) + j).setValue(
-          templateObj[label]
+          templateWithLocale[label]
         );
       }
     }

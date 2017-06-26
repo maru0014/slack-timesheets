@@ -16,6 +16,7 @@ export default class Kernel {
         if(spreadsheetId) {
             const spreadsheet = SpreadsheetApp.openById(spreadsheetId);
             if (spreadsheet) {
+                this.configure = new GSConfigure(spreadsheet);
                 this.slack = new Slack(
                     this.configure.get('Slack Incoming URL'),
                     this.configure.get('無視するユーザ')
@@ -24,7 +25,7 @@ export default class Kernel {
 
                 this.i18n = new I18n(this.locale);
 
-                this.template = new Template(new TemplateStrageGs(spreadsheet, this.i18n));
+                this.template = new Template(new TemplateStrageGs(spreadsheet, this.locale));
                 this.timesheets = new GSTimesheets(spreadsheet, this.configure);
                 return true;
 
