@@ -22,6 +22,7 @@ export default class Kernel {
                 );
                 this.locale = this.configure.get("Language");
 
+                this.i18n = new I18n(this.locale);
 
                 this.template = new Template(new TemplateStrageGs(spreadsheet, this.i18n));
                 this.timesheets = new GSTimesheets(spreadsheet, this.configure);

@@ -1,88 +1,85 @@
 import _ from 'lodash';
-import I18n from './i18n';
 import TemplateStrage from './template-strage';
+import * as locales from './locales';
 
-export default class TemplateStrageGs extends TemplateStrage{
+const keyRangeFirst = 2;
+const templateObj = locales.en.template;
+const templateObjLabels = _.keys(templateObj);
+const templateObjLength = templateObjLabels.length;
+const keyRangeLast = templateObjLength + 1;
 
-  constructor(spreadsheet) {
+const localesSize = _.keys(locales).length;
+
+export default class TemplateStrageGs extends TemplateStrage {
+
+  constructor(spreadsheet, locale) {
     super();
     // メッセージテンプレート設定
     this.sheet = spreadsheet.getSheetByName('_メッセージ');
-    if(!this.sheet) {
+    if (!this.sheet) {
       this.sheet = TemplateStrageGs.createMessageSheet(spreadsheet);
     }
+    this.locale = locale;
   }
 
   static createMessageSheet(spreadsheet) {
     const sheet = spreadsheet.insertSheet('_メッセージ');
-    if(!sheet) {
+    if (!sheet) {
       throw "エラー: メッセージシートを作れませんでした";
     }
 
+    // create template labels (signIn, signOut,...)
+    for (let i = keyRangeFirst; i <= keyRangeLast; i++) {
+      sheet.getRange("A" + i).setValue(
+        templateObjLabels[i - 2]
+      );
+    }
 
-    sheet.getRange("A1:O2").setValues([
-      [
-        "signIn",
-        "signInUpdate",
-        "signOut",
-        "signOutUpdate",
-        "noRest",
-        "signInFirst",
-        "signOutFirst",
-        "alreadySignedIn",
-        "alreadySignedOut",
-        "restHours",
-        "dayTotal",
-        "monthTotal",
-        "didnotWorkThatMonth",
-        "didnotSignOutOn",
-        "help"
-      ],
-      [
-        "<@#1> 出勤時間を#2へ変更しました",
-        "<@#1> 出勤時間を#2へ変更しました",
-        "<@#1> お疲れ様でした (#2)",
-        "<@#1> 退勤時間を#2へ変更しました",
-        "<@#1> #2は休憩なしに変更しました",
-        "#1はまだ出勤押してません。このコマンドを出勤してから実行してください",
-        "#1はまだ退勤押してません。このコマンドを退勤してから実行してください",
-        "#1はもう出勤してますよ",
-        "#1はもう退勤してますよ",
-        "<@#1> #2は#3時間の休憩(中抜け)を登録しました",
-        "<@#1> さんの#2の勤務は#3～#4就業時間#5時間、休憩#6時間、時間外労働#7時間、深夜労働#8時間です",
-        '#1さんの#2月集計:\n就業 - #3時間\n時間外労働 - #4時間\n深夜労働 - #5時間',
-        "#1さんが#2に出勤しませんでした",
-        "#1さんが#2に退勤しませんでした",
-        'timesheetsの使い方：\n\nおはようございます 〜 今の時間で出勤登録\n\nおはようございます 10:00 〜 10時に出勤登録\n\n5/4は11:30に出勤しました 〜 5月4日の出勤時間を11:30で登録\n\nお疲れ様でした 〜 今の時間で退勤登録\n\n5/4は18:30に退勤しました 〜 5月4日の退勤時間を18:30で登録\n\n◯は△時間なかぬけでした 〜 ◯の休憩△時間追加\n\n今日は休憩なしでした 〜 今日の休憩を0時間に更新。注意：このコマンド打たないと休憩1時間を登録させます\n\n今日は休憩1.5時間 〜 今日の休憩を1.5時間に更新。\n\n◯は何時間働きましたか 〜 ◯に働いた時間と休憩時間を表示\n\n集計 :username year/month 〜 usernameのユーザーのyear年month月に働いた就業時間を表\n(例: 集計 :n.rashidov 2017/4)'
-      ]
-    ]);
+    // create columns for languages
 
+    let columnNumber = 'B'.charCodeAt(0); // char into number (B -> 66)
+
+    for (let i = columnNumber; i < columnNumber + localesSize; i++) {
+      const column = String.fromCharCode(i);
+      sheet.getRange(column + '1').setValue(_.keys(locales)[i - columnNumber]);
+      for (let j = keyRangeFirst; j <= keyRangeLast; j++) {
+        const label = sheet.getRange('A' + j).getValue();
+        sheet.getRange(String.fromCharCode(i) + j).setValue(
+          templateObj[label]
+        );
+      }
+    }
     return sheet;
   }
 
   getLabels() {
-    return this.sheet.getRange("A1:Z1").getValues()[0];
+    return this.sheet.getRange("A" + keyRangeFirst + ":A" + keyRangeLast).getValues();
+  }
+
+  getColNumber(label) {
+    const labels = this.sheet.getRange("A" + keyRangeFirst + ":A" + keyRangeLast).getValues();
+
+    for (let i = 0; i < labels.length; ++i) {
+      if (labels[i][0] === label) {
+        return i + 2;
+      }
+    }
+    return null;
+  }
+
+  getColLetter() {
+    const lastLocaleColumn = String.fromCharCode(65 + localesSize);
+    for (let i = 66; i <= 65 + localesSize; i++) {
+      if (this.sheet.getRange(String.fromCharCode(i) + "1").getValue() === this.locale) {
+        return String.fromCharCode(i);
+      }
+    }
+    return null;
   }
 
   // テンプレートからメッセージを生成
   get(label) {
-    var labels = this.getLabels();
-
-    for(var i = 0; i < labels.length; ++i) {
-      if(labels[i] == label) {
-        return _.sample(
-            _.filter(
-                _.map(this.sheet.getRange(String.fromCharCode(i+65)+'2:'+(String.fromCharCode(i+65))).getValues(), function(v) {
-                  return v[0];
-                }),
-                function(v) {
-                  return !!v;
-                }
-            )
-        );
-      }
-    }
-    return null;
+    return this.sheet.getRange(this.getColLetter() + this.getColNumber(label)).getValues();
   }
 
 }

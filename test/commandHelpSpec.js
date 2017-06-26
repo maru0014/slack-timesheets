@@ -1,10 +1,12 @@
 import sinon from 'sinon';
-import I18n from '../src/i18n';
 
+import I18n from '../src/i18n';
+import * as locales from '../src/locales';
 import Slack from '../src/slack';
 import CommandHelp from '../src/command/command-help';
 import Template from '../src/template';
 import TemplateStrageArray from '../src/template-strage-array';
+import _ from 'lodash';
 
 
 
@@ -25,8 +27,7 @@ describe('CommandHelpSpec', ()=> {
 
   it('should call slack send method with **help** template', () => {
 
-      let i18n = new I18n();
-      console.log(i18n);
+    console.log(_.keys(locales)[0]);
     const mockTemplate = sinon.mock(template).expects('render').withArgs("help").onCall(0).returns(expectMessage);
 
     const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);
