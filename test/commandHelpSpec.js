@@ -30,7 +30,7 @@ describe('CommandHelpSpec', ()=> {
     let lang = "en";
     let i18n = new I18n();
     let langee = _.keys(locales)[0];
-    console.log(locales[langee]["template"]["signIn"]);
+    console.log(langee);
     const mockTemplate = sinon.mock(template).expects('render').withArgs("help").onCall(0).returns(expectMessage);
 
     const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);
