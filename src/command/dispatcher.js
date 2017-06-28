@@ -15,7 +15,7 @@ export default class Dispatcher {
   }
 
   dispatch(username, body) {
-    const datetime = DateTime.parse(body);
+    const datetime = DateTime.parse(body, this.kernel.getI18n());
 
     const commands = [
       CommandSignOut,
@@ -29,7 +29,7 @@ export default class Dispatcher {
 
 
     commands.map((CommandClass) => {
-      if (CommandClass.match(body)) {
+      if (CommandClass.match(body, this.kernel.getI18n())) {
         const command = new CommandClass(this.kernel.getSlack(), this.kernel.getTemplate(), this.kernel.getTimesheets());
         command.execute(username, datetime.date, datetime.time, body);
       }

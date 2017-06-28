@@ -5,8 +5,9 @@ import TimesheetRow from '../timesheet-row';
 import moment from 'moment';
 
 export default class CommandSignOut extends CommandAbstract{
-  static match(body) {
-    return body.match(/(バ[ー〜ァ]*イ|ば[ー〜ぁ]*い|おやすみ|お[つっ]ー|おつ|さらば|お先|お疲|帰|乙|退勤|ごきげんよ|グ[ッ]?バイ)/);
+  static match(body, i18n) {
+    const regex = new RegExp(i18n.__('commands.signOut'), 'i');
+    return body.match(regex);
   }
 
   /**

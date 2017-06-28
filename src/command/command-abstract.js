@@ -16,7 +16,7 @@ export default class CommandAbstract {
    * @param body {String}
    * @returns {boolean}
    */
-  static match(body) {
+  static match(body, i18n) {
     return false;
   }
 

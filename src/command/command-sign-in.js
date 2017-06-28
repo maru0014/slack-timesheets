@@ -2,8 +2,9 @@ import CommandAbstract from './command-abstract';
 import moment from 'moment';
 
 export default class CommandSignIn extends CommandAbstract{
-  static match(body) {
-    return body.match(/(モ[ー〜]+ニン|も[ー〜]+にん|おっは|おは|へろ|はろ|ヘロ|ハロ|出勤)/);
+  static match(body, i18n) {
+    const regex = new RegExp(i18n.__('commands.signIn'), 'i');
+    return body.match(regex);
   }
   execute(username, date, time) {
 
@@ -12,7 +13,7 @@ export default class CommandSignIn extends CommandAbstract{
 
     if (!row.getSignIn() || row.getSignIn() === '-') {
 
-      const setterTime = time? (date? date.format('YYYY/MM/DD '): now.format('YYYY/MM/DD '))+moment(time,"HH:mm").format('HH:mm'): now.format('YYYY/MM/DD HH:mm');
+      const setterTime = time ? (date? date.format('YYYY/MM/DD '): now.format('YYYY/MM/DD ')) + moment(time, "HH:mm").format('HH:mm') : now.format('YYYY/MM/DD HH:mm');
 
       row.setSignIn(setterTime);
       row.setRestTime("1");

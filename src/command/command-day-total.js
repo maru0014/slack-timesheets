@@ -3,8 +3,9 @@ import CommandAbstract from './command-abstract';
 import moment from 'moment';
 
 export default class CommandDayTotal extends CommandAbstract{
-  static match(body) {
-    return body.match(/何時間働|勤務時間/);
+  static match(body, i18n) {
+    const regex = new RegExp(i18n.__('commands.dayTotal'), 'i');
+    return body.match(regex);
   }
 
   execute(username, date) {

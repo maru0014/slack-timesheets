@@ -1,8 +1,9 @@
 import CommandAbstract from './command-abstract';
 
 export default class CommandHelp extends CommandAbstract{
-  static match(body) {
-    return body.match(/help/);
+  static match(body, i18n) {
+    const regex = new RegExp(i18n.__('commands.help'), 'i');
+    return body.match(regex);
   }
   execute(username, date, time) {
 

@@ -5,8 +5,9 @@ import TimesheetRow from '../timesheet-row';
 import moment from 'moment';
 
 export default class CommandNoRest extends CommandAbstract{
-  static match(body) {
-    return body.match(/休憩なし/);
+  static match(body, i18n) {
+    const regex = new RegExp(i18n.__('commands.noRest'), 'i');
+    return body.match(regex);
   }
 
   /**

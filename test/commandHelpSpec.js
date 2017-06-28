@@ -2,6 +2,7 @@ import sinon from 'sinon';
 
 import I18n from '../src/i18n';
 import * as locales from '../src/locales';
+import moment from 'moment';
 import Slack from '../src/slack';
 import CommandHelp from '../src/command/command-help';
 import Template from '../src/template';
@@ -27,10 +28,37 @@ describe('CommandHelpSpec', ()=> {
 
   it('should call slack send method with **help** template', () => {
 
-    let lang = "en";
-    let i18n = new I18n();
-    let langee = _.keys(locales)[0];
-    console.log(langee);
+    let str = "I signed in at 9am today";
+    const i18n = new I18n("en");
+
+      str = String(str || "").toLowerCase().replace(/[Ａ-Ｚａ-ｚ０-９：／．]/g, function(s) {
+        return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+      });
+
+// const reg = new RegExp("((\\d{1,2})\\s*[:"+i18n.__('dateTimeSettings.oclock')+"]{1}\\s*(\\d{1,2})\\s*("+i18n.__('dateTimeSettings.pm')+"|)|("+i18n.__('dateTimeSettings.pm')+")|("+i18n.__('dateTimeSettings.am')+"|"+i18n.__('dateTimeSettings.pm')+")\\s*(\\d{1,2})(\\s*[:"+i18n.__('dateTimeSettings.oclock')+"]\\s*(\\d{1,2})|)|(\\d{1,2})(\\s*[:"+i18n.__('dateTimeSettings.oclock')+"]{1}\\s*(\\d{1,2})|)("+i18n.__('dateTimeSettings.am')+"|"+i18n.__('dateTimeSettings.pm')+")|(\\d{1,2})\\s*"+i18n.__('dateTimeSettings.oclock')+")", 'i');
+// const reg = /((\d{1,2})\s*[:時]{1}\s*(\d{1,2})\s*(pm|)|(am|pm|午前|午後)\s*(\d{1,2})(\s*[:時]\s*(\d{1,2})|)|(\d{1,2})(\s*[:時]{1}\s*(\d{1,2})|)(am|pm)|(\d{1,2})\s*時)/;
+const reg = new RegExp('((\\d{1,2})\\s*[:'+i18n.__('dateTimeSettings.oclock')+']{1}\\s*(\\d{1,2})\\s*('+i18n.__('dateTimeSettings.pm')+'|)|('+i18n.__('dateTimeSettings.am')+'|'+i18n.__('dateTimeSettings.pm')+'|'+i18n.__('dateTimeSettings.am')+'|'+i18n.__('dateTimeSettings.pm')+')\\s*(\\d{1,2})(\\s*[:'+i18n.__('dateTimeSettings.oclock')+']\\s*(\\d{1,2})|)|(\\d{1,2})(\\s*[:'+i18n.__('dateTimeSettings.oclock')+']{1}\\s*(\\d{1,2})|)('+i18n.__('dateTimeSettings.am')+'|'+i18n.__('dateTimeSettings.pm')+')|(\\d{1,2})\\s*'+i18n.__('dateTimeSettings.oclock')+')', 'i');
+    const matches = str.match(reg);
+      console.log(matches);
+      if(matches) {
+        let hour, min;
+
+        // 1時20, 2:30, 3:00pm
+        if(matches[1] != null) {
+          hour = parseInt(matches[1]);
+          min = parseInt(matches[3] ? matches[3] : '0');
+          if(matches.indexOf(i18n.__("dateTimeSettings.pm")) > -1) {
+            hour += 12;
+            console.log("a");
+          }
+          console.log("A"+min);
+        }
+
+
+
+        console.log(moment({hour: hour, minute: min}).format("HH:mm"));
+      }
+
     const mockTemplate = sinon.mock(template).expects('render').withArgs("help").onCall(0).returns(expectMessage);
 
     const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);

@@ -72,4 +72,8 @@ export default class Kernel {
     getLocale() {
         return this.locale;
     }
+
+    getI18n() {
+        return this.i18n;
+    }
 }

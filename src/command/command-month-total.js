@@ -1,10 +1,10 @@
 import CommandAbstract from './command-abstract';
 import moment from 'moment';
-import TimesheetRow from "../timesheet-row";
 
 export default class CommandMonthTotal extends CommandAbstract{
-  static match(body) {
-    return body.match(/集計/);
+  static match(body, i18n) {
+    const regex = new RegExp(i18n.__('commands.monthTotal'), 'i');
+    return body.match(regex);
   }
 
   execute(username, date, time, body) {
@@ -38,7 +38,7 @@ export default class CommandMonthTotal extends CommandAbstract{
     let totalOvertimeHours = 0;
     let totalLateHours = 0;
 
-    while (date.month() == month) {
+    while (date.month() === month) {
 
       const row = timesheets.get(username, date);
 

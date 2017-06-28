@@ -5,8 +5,10 @@ import TimesheetRow from '../timesheet-row';
 import moment from 'moment';
 
 export default class CommandRestHours extends CommandAbstract{
-  static match(body) {
-    return body.match(/なかぬけ|中抜|休憩(?!なし)/);
+  static match(body, i18n) {
+    const regex = new RegExp(i18n.__('commands.restHours'), 'i');
+    return body.match(regex);
+    // return body.match(/なかぬけ|中抜|休憩(?!なし)/);
   }
 
   /**

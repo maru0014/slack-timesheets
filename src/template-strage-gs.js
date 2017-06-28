@@ -81,7 +81,7 @@ export default class TemplateStrageGs extends TemplateStrage {
 
   // テンプレートからメッセージを生成
   get(label) {
-    return this.sheet.getRange(this.getColLetter() + this.getColNumber(label)).getValues();
+    return this.sheet.getRange(this.getColLetter() + this.getColNumber(label)).getValue();
   }
 
 }
