@@ -10,7 +10,7 @@ export default class GASProperties {
     return this.properties.getProperty(key);
   }
 
-  set (key, val) {
+  set(key, val) {
     this.properties.setProperty(key, val);
     return val;
   };

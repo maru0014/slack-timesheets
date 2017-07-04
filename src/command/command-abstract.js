@@ -14,6 +14,7 @@ export default class CommandAbstract {
   /**
    *
    * @param body {String}
+   * @param i18n {I18n}
    * @returns {boolean}
    */
   static match(body, i18n) {
@@ -27,7 +28,7 @@ export default class CommandAbstract {
    * @param time {Moment|null}
    * @param body {String|null}
    */
-  execute(username, date, time, body=null) {
+  execute(username, date, time, body = null, i18n) {
 
   }
 }

@@ -1,6 +1,4 @@
-import _ from 'lodash';
 import moment from 'moment';
-import GSTimesheets from './gs-timesheets'
 
 export default class TimesheetRow {
 
@@ -12,7 +10,7 @@ export default class TimesheetRow {
    */
   constructor(username, date, row) {
     this.username = username;
-    this.row = row? row: ["","","","","","","",""];
+    this.row = row ? row : ["", "", "", "", "", "", "", ""];
     this.setDate(date);
     if (!row) {
       this.setRestTime(1);
@@ -166,17 +164,17 @@ export default class TimesheetRow {
   }
 
   static rounder(num) {
-    var intPart = Math.floor(num);
+    const intPart = Math.floor(num);
 
-    var decimalPart = num - intPart;
+    const decimalPart = num - intPart;
     if (decimalPart >= 0.75) {
-      return intPart+".75";
+      return intPart + ".75";
     }
     else if (decimalPart >= 0.5) {
-      return intPart+".5";
+      return intPart + ".5";
     }
     else if (decimalPart >= 0.25) {
-      return intPart+".25";
+      return intPart + ".25";
     }
     else {
       return intPart;
@@ -185,7 +183,7 @@ export default class TimesheetRow {
 
   static workedHours(start, end, restedHours) {
     let workedHours = moment(end, "YYYY/MM/DD HH:mm").diff(moment(start, "YYYY/MM/DD HH:mm"), 'hours', true);
-    if (restedHours == null || restedHours == "" || !restedHours)restedHours = 0;
+    if (restedHours == null || restedHours == "" || !restedHours) restedHours = 0;
     return TimesheetRow.rounder(workedHours - restedHours);
   }
 
@@ -197,13 +195,11 @@ export default class TimesheetRow {
     //taking two parameters here, in case the user works eg. from 24 May 9pm to 25 May 7am -- need an original date (24 May)]
     let lateHourStart = 22;
     if (moment(currentDatetime, "YYYY/MM/DD HH:mm").hour() >= lateHourStart) {
-      let original = moment(originalDatetime).format("YYYY/MM/DD")+' '+lateHourStart+":00";
+      let original = moment(originalDatetime).format("YYYY/MM/DD") + ' ' + lateHourStart + ":00";
       let current = moment(currentDatetime).format("YYYY/MM/DD HH:mm");
 
       let lateHours = moment(current).diff(moment(original), 'hours', true);
       return TimesheetRow.rounder(lateHours);
     }
   }
-
-
 }

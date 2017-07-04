@@ -10,12 +10,11 @@ import TemplateStrageArray from '../src/template-strage-array';
 import _ from 'lodash';
 
 
-
 const expectMessage = "sample string";
 
-describe('CommandHelpSpec', ()=> {
+describe('CommandHelpSpec', () => {
 
-  let slack,templateStrage,template;
+  let slack, templateStrage, template;
 
 
   beforeEach(() => {
@@ -26,6 +25,7 @@ describe('CommandHelpSpec', ()=> {
 
 
   it('should call slack send method with **help** template', () => {
+
     const mockTemplate = sinon.mock(template).expects('render').withArgs("help").onCall(0).returns(expectMessage);
 
     const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);

@@ -1,7 +1,6 @@
 import GSConfigure from './gs-configure';
 import GSTemplate from './template-strage-gs';
 import moment from 'moment';
-import _ from 'lodash';
 
 export default class Installer {
   constructor() {
@@ -28,7 +27,7 @@ export default class Installer {
     configure.set('Language', 'en');
     configure.setNote('Language', 'Please dont change the language setting manujally. Run a command in slack instead');
 
-    // メッセージ用のシートを作成
+    // create sheet for messages
     new GSTemplate(spreadsheet);
   }
 }

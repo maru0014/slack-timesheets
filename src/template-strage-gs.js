@@ -14,7 +14,7 @@ export default class TemplateStrageGs extends TemplateStrage {
 
   constructor(spreadsheet, locale) {
     super();
-    // メッセージテンプレート設定
+    // template settings
     this.sheet = spreadsheet.getSheetByName('_Messages');
     if (!this.sheet) {
       this.sheet = TemplateStrageGs.createMessageSheet(spreadsheet);
@@ -31,14 +31,12 @@ export default class TemplateStrageGs extends TemplateStrage {
     // create template labels (signIn, signOut,...)
     for (let i = keyRangeFirst; i <= keyRangeLast; i++) {
       sheet.getRange("A" + i).setValue(
-        templateObjLabels[i - 2]
+          templateObjLabels[i - 2]
       );
     }
 
     // create columns for languages
-
     let columnNumber = 'B'.charCodeAt(0); // char into number (B -> 66)
-
     for (let i = columnNumber; i < columnNumber + localesSize; i++) {
       const setLang = _.keys(locales)[i - columnNumber];
       const templateWithLocale = locales[setLang]["template"];
@@ -47,20 +45,15 @@ export default class TemplateStrageGs extends TemplateStrage {
       for (let j = keyRangeFirst; j <= keyRangeLast; j++) {
         const label = sheet.getRange('A' + j).getValue();
         sheet.getRange(String.fromCharCode(i) + j).setValue(
-          templateWithLocale[label]
+            templateWithLocale[label]
         );
       }
     }
     return sheet;
   }
 
-  getLabels() {
-    return this.sheet.getRange("A" + keyRangeFirst + ":A" + keyRangeLast).getValues();
-  }
-
   getColNumber(label) {
     const labels = this.sheet.getRange("A" + keyRangeFirst + ":A" + keyRangeLast).getValues();
-
     for (let i = 0; i < labels.length; ++i) {
       if (labels[i][0] === label) {
         return i + 2;
@@ -79,7 +72,7 @@ export default class TemplateStrageGs extends TemplateStrage {
     return null;
   }
 
-  // テンプレートからメッセージを生成
+  // generate message from template
   get(label) {
     return this.sheet.getRange(this.getColLetter() + this.getColNumber(label)).getValue();
   }

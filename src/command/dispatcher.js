@@ -7,7 +7,6 @@ import CommandNoRest from "./command-no-rest";
 import CommandRestHours from "./command-rest-hours";
 import CommandMonthTotal from "./command-month-total";
 
-
 export default class Dispatcher {
 
   constructor(kernel) {
@@ -16,7 +15,6 @@ export default class Dispatcher {
 
   dispatch(username, body) {
     const datetime = DateTime.parse(body, this.kernel.getI18n());
-
     const commands = [
       CommandSignOut,
       CommandSignIn,
@@ -26,15 +24,11 @@ export default class Dispatcher {
       CommandMonthTotal,
       CommandHelp
     ];
-
-
     commands.map((CommandClass) => {
       if (CommandClass.match(body, this.kernel.getI18n())) {
         const command = new CommandClass(this.kernel.getSlack(), this.kernel.getTemplate(), this.kernel.getTimesheets());
-        command.execute(username, datetime.date, datetime.time, body);
+        command.execute(username, datetime.date, datetime.time, body, this.kernel.getI18n());
       }
     });
-
-
   }
 }
