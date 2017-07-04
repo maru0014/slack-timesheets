@@ -15,6 +15,9 @@ export default class DateTime {
 
 
     static parse(str, i18n) {
+        str = String(str || "").toLowerCase().replace(/[Ａ-Ｚａ-ｚ０-９：／．]/g, function(s) {
+            return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+        });
         let date = DateTime.parseDate(str, i18n);
         let time = DateTime.parseTime(str, i18n);
 
@@ -23,22 +26,30 @@ export default class DateTime {
 
     // get time from string
     static parseTime (str, i18n) {
-        str = String(str || "").toLowerCase().replace(/[Ａ-Ｚａ-ｚ０-９：／．]/g, function(s) {
-            return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
-        });
 
-      const reg = new RegExp('((\\d{1,2})\\s*[:'+i18n.__('dateTimeSettings.oclock')+']{1}\\s*(\\d{1,2})\\s*('+i18n.__('dateTimeSettings.pm')+'|)|('+i18n.__('dateTimeSettings.am')+'|'+i18n.__('dateTimeSettings.pm')+'|'+i18n.__('dateTimeSettings.am')+'|'+i18n.__('dateTimeSettings.pm')+')\\s*(\\d{1,2})(\\s*[:'+i18n.__('dateTimeSettings.oclock')+']\\s*(\\d{1,2})|)|(\\d{1,2})(\\s*[:'+i18n.__('dateTimeSettings.oclock')+']{1}\\s*(\\d{1,2})|)('+i18n.__('dateTimeSettings.am')+'|'+i18n.__('dateTimeSettings.pm')+')|(\\d{1,2})\\s*'+i18n.__('dateTimeSettings.oclock')+')', 'i');
+      const reg = new RegExp('((\\d{1,2})\\s*[:'+i18n.__('dateTimeSettings.oclock')+']{1}\\s*(\\d{1,2})\\s*('+i18n.__('dateTimeSettings.am')+'|'+i18n.__('dateTimeSettings.pm')+'|)|(\\d{1,2})('+i18n.__('dateTimeSettings.am')+'|'+i18n.__('dateTimeSettings.pm')+')|(\\d{1,2})\\s*'+i18n.__('dateTimeSettings.oclock')+')', 'i');
       const matches = str.match(reg);
+      console.log(matches);
       if(matches) {
         let hour, min;
 
-        // 1時20, 2:30, 3:00pm
-        if(matches[1] != null) {
-          hour = parseInt(matches[1]);
+        // 10:30, 17:30, 8:30am, 5:00pm, etc
+        if(matches[2] != null) {
+          hour = parseInt(matches[2]);
           min = parseInt(matches[3] ? matches[3] : '0');
-          if (matches.indexOf(i18n.__("dateTimeSettings.pm")) > -1) {
-            hour += 12;
-          }
+        }
+
+        // 9am, 5pm
+        if(matches[5] != null) {
+          hour = parseInt(matches[5]);
+        }
+        if (matches.indexOf(i18n.__("dateTimeSettings.pm")) > -1) {
+          hour += 12;
+        }
+
+        // 9oclock, 18oclock
+        if(matches[7] != null) {
+          hour = parseInt(matches[7]);
         }
         return moment({hour: hour, minute: min});
       }
@@ -47,9 +58,6 @@ export default class DateTime {
 
     // get date from string
     static parseDate (str, i18n) {
-        str = String(str || "").toLowerCase().replace(/[Ａ-Ｚａ-ｚ０-９：／．]/g, function(s) {
-            return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
-        });
 
         const regTomorrow = new RegExp(i18n.__('dateTimeSettings.tomorrow'), 'i');
         if(str.match(regTomorrow)) {

@@ -17,9 +17,9 @@ export default {
     help: 'timesheetsの使い方：\n\nおはようございます 〜 今の時間で出勤登録\n\nおはようございます 10:00 〜 10時に出勤登録\n\n5/4は11:30に出勤しました 〜 5月4日の出勤時間を11:30で登録\n\nお疲れ様でした 〜 今の時間で退勤登録\n\n5/4は18:30に退勤しました 〜 5月4日の退勤時間を18:30で登録\n\n◯は△時間なかぬけでした 〜 ◯の休憩△時間追加\n\n今日は休憩なしでした 〜 今日の休憩を0時間に更新。注意：このコマンド打たないと休憩1時間を登録させます\n\n今日は休憩1.5時間 〜 今日の休憩を1.5時間に更新。\n\n◯は何時間働きましたか 〜 ◯に働いた時間と休憩時間を表示\n\n集計 :username year/month 〜 usernameのユーザーのyear年month月に働いた就業時間を表\n(例: 集計 :n.rashidov 2017/4)'
   },
   dateTimeSettings: {
-    am: "((\\d{1,2})\\s(\\d{1,2})\\s*(pm)|(am|pm)\\s*(\\d{1,2})(\\s*(\\d{1,2})|)|(\\d{1,2})(\\s*(\\d{1,2})|)(am|pm)|(\\d{1,2}))",
+    am: "am",
     pm: "pm",
-    oclock: "o(')?clock",
+    oclock: "oclock",
     hours: "hour(s)?",
     yesterday: "yesterday",
     today: "today",
@@ -29,12 +29,12 @@ export default {
     day: "day"
   },
   commands: {
-    dayTotal: "how.*many.*hours+|show.*day.*total+", // how many hours did I work today? | Show day total for yesterday
+    dayTotal: "how\s*many\s*hours+|show\s*day\s*total", // how many hours did I work today? | Show day total for yesterday
     help: "help",
-    monthTotal: "show.*month.*total+", // Show month total for 2017/6 (year/month)
-    noRest: "did.*not.*take.*break+", // I did not take a break yesterday
-    restHours: "took.*break+", // I took a 3 hour break today
-    signIn: "hi|hello|sign(ed)?.*in+", // Hi | Sign in | I signed in at 10am today
-    signOut: "(good)?.*bye|sign(ed)?.*out+"  // Bye | Sign out | I signed out at 7pm today
+    monthTotal: "show\s*month\s*total", // Show month total for 2017/6 (year/month)
+    noRest: "did\s*not\s*take\s*break", // I did not take a break yesterday
+    restHours: "took\s*break", // I took a 3 hour break today
+    signIn: "hi|hello|sign(ed)?\s*in", // Hi | Sign in | I signed in at 10am today
+    signOut: "(good)?\s*bye|sign(ed)?\s*out"  // Bye | Sign out | I signed out at 7pm today
   }
 }
