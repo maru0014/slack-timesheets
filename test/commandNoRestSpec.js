@@ -7,6 +7,7 @@ import CommandDayTotal from '../src/command/command-day-total';
 import Timesheets from '../src/gs-timesheets';
 import TimesheetRow from '../src/timesheet-row';
 import Template from '../src/template';
+import I18n from '../src/i18n';
 import TemplateStrageArray from '../src/template-strage-array';
 
 
@@ -14,7 +15,7 @@ const expectMessage = "sample string";
 
 describe('CommandNoRestSpec', ()=> {
 
-  let username,year,actualMonth,day,date,slack,timesheets,templateStrage,template;
+  let username,year,actualMonth,day,date,slack,i18n,timesheets,templateStrage,template;
 
   beforeEach(() => {
     username = "tester";
@@ -25,7 +26,8 @@ describe('CommandNoRestSpec', ()=> {
     date = moment({year: year, month: actualMonth-1, day: 1});
 
     slack = new Slack();
-    timesheets = new Timesheets();
+    i18n = new I18n();
+    timesheets = new Timesheets(i18n);
     templateStrage = new TemplateStrageArray();
     template = new Template(templateStrage);
   });

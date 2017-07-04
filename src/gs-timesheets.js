@@ -9,12 +9,11 @@ export default class GSTimesheets {
    * @param configure
    * @param i18n
    */
-  constructor(spreadsheet, configure, i18n) {
+  constructor(i18n, spreadsheet, configure) {
     this.spreadsheet = spreadsheet;
     this.configure = configure;
 
     this._sheets = {};
-    console.warn(i18n.__('timesheets.date'));
     this.scheme = {
       columns: [
         { name: i18n.__('timesheets.date') },

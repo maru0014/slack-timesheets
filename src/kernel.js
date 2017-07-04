@@ -26,7 +26,7 @@ export default class Kernel {
                 this.i18n = new I18n(this.locale);
 
                 this.template = new Template(new TemplateStrageGs(spreadsheet, this.locale));
-                this.timesheets = new GSTimesheets(spreadsheet, this.configure, this.i18n);
+                this.timesheets = new GSTimesheets(this.i18n, spreadsheet, this.configure);
                 return true;
 
             }

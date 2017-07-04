@@ -6,6 +6,7 @@ import CommandMonthTotal from '../src/command/command-month-total';
 import Timesheets from '../src/gs-timesheets';
 import TimesheetRow from '../src/timesheet-row';
 import Template from '../src/template';
+import I18n from '../src/i18n';
 import TemplateStrageArray from '../src/template-strage-array';
 
 
@@ -13,7 +14,7 @@ const expectMessage = "sample string";
 
 describe('CommandMonthTotalSpec', ()=> {
 
-  let username,year,actualMonth,day,date,slack,timesheets,templateStrage,template, body;
+  let username,year,actualMonth,day,date,slack,i18n,timesheets,templateStrage,template, body;
 
   beforeEach(() => {
     username = "tester";
@@ -23,10 +24,11 @@ describe('CommandMonthTotalSpec', ()=> {
     day = 1;
     date = moment({year: year, month: actualMonth-1, day: 1});
 
-    body = "集計 :"+username+" "+year+"/"+actualMonth;
+    body = ":"+username+" "+year+"/"+actualMonth;
 
     slack = new Slack();
-    timesheets = new Timesheets();
+    i18n = new I18n();
+    timesheets = new Timesheets(i18n);
     templateStrage = new TemplateStrageArray();
     template = new Template(templateStrage);
   });
