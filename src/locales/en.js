@@ -36,5 +36,15 @@ export default {
     restHours: "^((?!not).)*took.*break", // I took a 3 hour break today
     signIn: "hi|hello|sign(ed)?\\s*in", // Hi | Sign in | I signed in at 10am today
     signOut: "(good)?\\s*bye|sign(ed)?\\s*out"  // Bye | Sign out | I signed out at 7pm today
+  },
+  timesheets: {
+    date: "Date",
+    signIn: "Sign In",
+    signOut: "Sign out",
+    note: "Note",
+    restTime: "Rested time",
+    workedHours: "Worked Hours",
+    overtimeHours: "Overtime hours",
+    latenightHours: "Late night hours"
   }
 }

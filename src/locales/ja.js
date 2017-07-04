@@ -36,5 +36,15 @@ export default {
     restHours: "なかぬけ|中抜|休憩(?!なし)",
     signIn: "(モ[ー〜]+ニン|も[ー〜]+にん|おっは|おは|へろ|はろ|ヘロ|ハロ|出勤)",
     signOut: "(バ[ー〜ァ]*イ|ば[ー〜ぁ]*い|おやすみ|お[つっ]ー|おつ|さらば|お先|お疲|帰|乙|退勤|ごきげんよ|グ[ッ]?バイ)"
+  },
+  timesheets: {
+    date: "日付",
+    signIn: "出勤",
+    signOut: "出勤",
+    note: "出勤",
+    restTime: "休憩",
+    workedHours: "就業時間",
+    overtimeHours: "時間外労働",
+    latenightHours: "深夜労働"
   }
 }

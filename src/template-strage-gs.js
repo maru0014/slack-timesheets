@@ -15,7 +15,7 @@ export default class TemplateStrageGs extends TemplateStrage {
   constructor(spreadsheet, locale) {
     super();
     // メッセージテンプレート設定
-    this.sheet = spreadsheet.getSheetByName('_メッセージ');
+    this.sheet = spreadsheet.getSheetByName('_Messages');
     if (!this.sheet) {
       this.sheet = TemplateStrageGs.createMessageSheet(spreadsheet);
     }
@@ -23,9 +23,9 @@ export default class TemplateStrageGs extends TemplateStrage {
   }
 
   static createMessageSheet(spreadsheet) {
-    const sheet = spreadsheet.insertSheet('_メッセージ');
+    const sheet = spreadsheet.insertSheet('_Messages');
     if (!sheet) {
-      throw "エラー: メッセージシートを作れませんでした";
+      throw "Error, could not create the messages sheet";
     }
 
     // create template labels (signIn, signOut,...)

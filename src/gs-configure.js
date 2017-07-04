@@ -5,7 +5,7 @@ import moment from 'moment';
 
 export default class GSConfigure {
   constructor (spreadsheet) {
-    const SHEET_NAME = '_設定';
+    const SHEET_NAME = '_Settings';
     this.sheet = spreadsheet.getSheetByName(SHEET_NAME);
     if(!this.sheet) {
       this.sheet = spreadsheet.insertSheet(SHEET_NAME);
@@ -17,7 +17,7 @@ export default class GSConfigure {
       return defaultValue;
     }
 
-    var values = _.find(this.sheet.getRange("A1:B"+this.sheet.getLastRow()).getValues(), function(v) {
+    const values = _.find(this.sheet.getRange("A1:B"+this.sheet.getLastRow()).getValues(), function(v) {
       return v[0] == key;
     });
     if(values) {
@@ -33,8 +33,8 @@ export default class GSConfigure {
 
   set (key, val) {
     if(this.sheet.getLastRow() > 0) {
-      var vals = this.sheet.getRange("A1:A"+this.sheet.getLastRow()).getValues();
-      for(var i = 0; i < this.sheet.getLastRow(); ++i) {
+      const vals = this.sheet.getRange("A1:A"+this.sheet.getLastRow()).getValues();
+      for(let i = 0; i < this.sheet.getLastRow(); ++i) {
         if(vals[i][0] == key) {
           this.sheet.getRange("B"+(i+1)).setValue(String(val));
           return val;
@@ -47,8 +47,8 @@ export default class GSConfigure {
 
   setNote (key, note) {
     if(this.sheet.getLastRow() > 0) {
-      var vals = this.sheet.getRange("A1:A"+this.sheet.getLastRow()).getValues();
-      for(var i = 0; i < this.sheet.getLastRow(); ++i) {
+      const vals = this.sheet.getRange("A1:A"+this.sheet.getLastRow()).getValues();
+      for(let i = 0; i < this.sheet.getLastRow(); ++i) {
         if(vals[i][0] == key) {
           this.sheet.getRange("C"+(i+1)).setValue(note);
           return;

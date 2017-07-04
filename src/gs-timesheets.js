@@ -7,26 +7,24 @@ export default class GSTimesheets {
    *
    * @param spreadsheet
    * @param configure
+   * @param i18n
    */
-  constructor(spreadsheet, configure) {
+  constructor(spreadsheet, configure, i18n) {
     this.spreadsheet = spreadsheet;
     this.configure = configure;
 
     this._sheets = {};
-
+    console.warn(i18n.__('timesheets.date'));
     this.scheme = {
       columns: [
-        { name: '日付' },
-        { name: '出勤' },
-        { name: '退勤' },
-        { name: 'ノート' },
-        { name: '休憩' },
-        { name: '就業時間' },
-        { name: '時間外労働' },
-        { name: '深夜労働' }
-      ],
-      properties: [
-        { name: 'DayOff', value: '土,日', comment: '← 月,火,水みたいに入力してください。アカウント停止のためには「全部」と入れてください。'},
+        { name: i18n.__('timesheets.date') },
+        { name: i18n.__('timesheets.signIn') },
+        { name: i18n.__('timesheets.signOut') },
+        { name: i18n.__('timesheets.note') },
+        { name: i18n.__('timesheets.restTime') },
+        { name: i18n.__('timesheets.workedHours') },
+        { name: i18n.__('timesheets.overtimeHours') },
+        { name: i18n.__('timesheets.latenightHours') }
       ]
     };
   };
@@ -49,19 +47,12 @@ export default class GSTimesheets {
       } else {
         // 中身が無い場合は新規作成
         if(sheet.getLastRow() == 0) {
-          // 設定部の書き出し
-          var properties = [["Properties count", this.scheme.properties.length, null]];
-          this.scheme.properties.forEach(function(s) {
-            properties.push([s.name, s.value, s.comment]);
-          });
-          sheet.getRange("A1:C"+(properties.length)).setValues(properties);
 
-          // ヘッダの書き出し
-          const rowNo = properties.length + 2;
+          // Timesheet header
           const cols = this.scheme.columns.map(function(c) { return c.name; });
-          sheet.getRange("A"+rowNo+":"+String.fromCharCode(65 + cols.length - 1)+rowNo).setValues([cols]);
-          sheet.getRange("B5:B").setNumberFormat("H:MM");
-          sheet.getRange("C5:C").setNumberFormat("H:MM");
+          sheet.getRange("A1:"+String.fromCharCode(65 + cols.length - 1)+"1").setValues([cols]);
+          sheet.getRange("B2:B").setNumberFormat("hh:mm");
+          sheet.getRange("C2:C").setNumberFormat("hh:mm");
         }
       }
     }
@@ -79,8 +70,8 @@ export default class GSTimesheets {
    * @private
    */
   _getRowNo(username, date = moment()) {
-    const startRowNo = this.scheme.properties.length + 7;
-    const startDate = moment(this.configure.get("開始日"));
+    const startRowNo = 5;
+    const startDate = moment(this.configure.get("StartDate"));
 
     return startRowNo + date.diff(startDate, 'days');
   }
@@ -95,7 +86,7 @@ export default class GSTimesheets {
     var sheet = this._getSheet(username);
     var rowNo = this._getRowNo(username, date);
 
-    if (rowNo <= 4) {
+    if (rowNo <= 1) {
       return null;
     }
 

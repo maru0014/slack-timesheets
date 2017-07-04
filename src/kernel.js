@@ -19,14 +19,14 @@ export default class Kernel {
                 this.configure = new GSConfigure(spreadsheet);
                 this.slack = new Slack(
                     this.configure.get('Slack Incoming URL'),
-                    this.configure.get('無視するユーザ')
+                    this.configure.get('IgnoredUsers')
                 );
                 this.locale = this.configure.get("Language");
 
                 this.i18n = new I18n(this.locale);
 
                 this.template = new Template(new TemplateStrageGs(spreadsheet, this.locale));
-                this.timesheets = new GSTimesheets(spreadsheet, this.configure);
+                this.timesheets = new GSTimesheets(spreadsheet, this.configure, this.i18n);
                 return true;
 
             }
