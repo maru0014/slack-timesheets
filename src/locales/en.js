@@ -29,12 +29,12 @@ export default {
     day: "day"
   },
   commands: {
-    dayTotal: "how\s*many\s*hours+|show\s*day\s*total", // how many hours did I work today? | Show day total for yesterday
+    dayTotal: "how\\s*many\\s*hours+|show\\s*day\\s*total", // how many hours did I work today? | Show day total for yesterday
     help: "help",
-    monthTotal: "show\s*month\s*total", // Show month total for 2017/6 (year/month)
-    noRest: "did\s*not\s*take\s*break", // I did not take a break yesterday
-    restHours: "took\s*break", // I took a 3 hour break today
-    signIn: "hi|hello|sign(ed)?\s*in", // Hi | Sign in | I signed in at 10am today
-    signOut: "(good)?\s*bye|sign(ed)?\s*out"  // Bye | Sign out | I signed out at 7pm today
+    monthTotal: "show\\s*month\\s*total", // Show month total for :username 2017/6
+    noRest: "did\\s*not\\s*take(\\s*a)?\\s*break", // I did not take a break yesterday
+    restHours: "^((?!not).)*took.*break", // I took a 3 hour break today
+    signIn: "hi|hello|sign(ed)?\\s*in", // Hi | Sign in | I signed in at 10am today
+    signOut: "(good)?\\s*bye|sign(ed)?\\s*out"  // Bye | Sign out | I signed out at 7pm today
   }
 }

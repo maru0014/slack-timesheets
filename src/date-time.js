@@ -39,15 +39,17 @@ export default class DateTime {
           min = parseInt(matches[3] ? matches[3] : '0');
         }
 
-        // 9am, 5pm
+        // 9am, 5pm, etc
         if(matches[5] != null) {
           hour = parseInt(matches[5]);
         }
+
+        // 5pm, 3:30pm, etc -> 17:00, 15:30, etc
         if (matches.indexOf(i18n.__("dateTimeSettings.pm")) > -1) {
           hour += 12;
         }
 
-        // 9oclock, 18oclock
+        // 9oclock, 18oclock, etc
         if(matches[7] != null) {
           hour = parseInt(matches[7]);
         }
