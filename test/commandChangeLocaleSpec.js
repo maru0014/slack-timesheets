@@ -18,6 +18,7 @@ class SpleadSheetMock {
   constructor() {
 
   }
+
   getSheetByName(name) {
     return {}
   }
@@ -26,7 +27,8 @@ class SpleadSheetMock {
 
 describe('CommandChangeLocaleSpec', () => {
 
-  let username, year, actualMonth, day, date, confLabel, newLocale, body, slack, i18n, timesheets, templateStrage, template, config;
+  let username, year, actualMonth, day, date, confLabel, newLocale, body, slack, i18n, timesheets, templateStrage,
+    template, config;
 
   beforeEach(() => {
     username = "tester";
@@ -51,7 +53,7 @@ describe('CommandChangeLocaleSpec', () => {
     body = "change locale to " + newLocale;
 
     const mockConfig = sinon.mock(config).expects('set').withArgs(confLabel, newLocale).onCall(0).returns(newLocale);
-    const mockTemplate = sinon.mock(template).expects('render').withArgs("changeLocale").onCall(0).returns(expectMessage);
+    const mockTemplate = sinon.mock(template).expects('render').withArgs("changeLocale", username).onCall(0).returns(expectMessage);
 
     const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);
     const command = new CommandChangeLocale(slack, template, null);
@@ -67,7 +69,7 @@ describe('CommandChangeLocaleSpec', () => {
     body = "change locale to " + newLocale;
 
     const mockConfig = sinon.mock(config).expects('set').withArgs(confLabel, newLocale).never();
-    const mockTemplate = sinon.mock(template).expects('render').withArgs("changeLocaleFailed").onCall(0).returns(expectMessage);
+    const mockTemplate = sinon.mock(template).expects('render').withArgs("changeLocaleFailed", username).onCall(0).returns(expectMessage);
 
     const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);
 

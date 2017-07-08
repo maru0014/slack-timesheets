@@ -38,7 +38,7 @@ describe('CommandSignInSpec', () => {
 
     const mockTimesheets = sinon.mock(timesheets).expects('get').withArgs(username, date).onCall(0).returns(row);
     sinon.mock(timesheets).expects('set').withArgs(row);
-    const mockTemplate = sinon.mock(template).expects('render').withArgs("alreadySignedIn", date.format('YYYY/MM/DD')).onCall(0).returns(expectMessage);
+    const mockTemplate = sinon.mock(template).expects('render').withArgs("alreadySignedIn", username, date.format('YYYY/MM/DD')).onCall(0).returns(expectMessage);
 
     const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);
 

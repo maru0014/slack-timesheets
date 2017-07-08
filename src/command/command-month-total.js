@@ -35,14 +35,19 @@ export default class CommandMonthTotal extends CommandAbstract {
 
     while (date.month() === month) {
       const row = timesheets.get(username, date);
-      if (row && row.getSignIn()) {
+      if (row && row.getSignIn() && row.getSignIn() != '-') {
         const signIn = row.getSignIn();
         const _totalWorkedHours = parseFloat(row.getWorkedHours());
         if (_totalWorkedHours) {
           totalWorkedHours += _totalWorkedHours;
         }
         else {
-          return template.render("didnotSignOutOn", username, moment(signIn, 'YYYY/MM/DD HH:mm').format('YYYY/MM/DD'));
+          return template.render(
+            "didnotSignOutOn",
+
+            username,
+            moment(signIn, 'YYYY/MM/DD HH:mm').format('YYYY/MM/DD')
+          );
         }
 
         const _totalOvertimeHours = parseFloat(row.getOvertimeHours());
@@ -58,10 +63,23 @@ export default class CommandMonthTotal extends CommandAbstract {
       date.add('1', 'days');
     }
     if (totalWorkedHours > 0) {
-      return template.render("monthTotal", username, year + "/" + actualMonth, totalWorkedHours, totalOvertimeHours, totalLateHours);
+      return template.render(
+        "monthTotal",
+
+        username,
+        year + "/" + actualMonth,
+        totalWorkedHours,
+        totalOvertimeHours,
+        totalLateHours
+      );
     }
     else {
-      return template.render("didnotWorkThatMonth", username, year + "/" + actualMonth);
+      return template.render(
+        "didnotWorkThatMonth",
+
+        username,
+        year + "/" + actualMonth
+      );
     }
   }
 }

@@ -8,7 +8,7 @@ export default class CommandHelp extends CommandAbstract {
 
   execute(username, date, time) {
     this.slack.send(this.template.render(
-        "help"
+      "help"
     ));
   }
 }

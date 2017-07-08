@@ -46,7 +46,8 @@ export default class DateTime {
 
       // 5pm, 3:30pm, etc -> 17:00, 15:30, etc
       if (matches.indexOf(i18n.__("dateTimeSettings.pm")) > -1) {
-        hour += 12;
+        if (hour !== 12)
+          hour += 12;
       }
 
       // 9oclock, 18oclock, etc

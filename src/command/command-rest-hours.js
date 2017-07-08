@@ -36,7 +36,7 @@ export default class CommandRestHours extends CommandAbstract {
       // find needed keyword in body and get a number to its left (eg 3.5hours　-> 3.5)
       let restTime = "";
       const find = i18n.__('dateTimeSettings.hours');
-      const regex = new RegExp('(\\d*\\.?\\d)\\s*'+find, 'i'); // regex to match the break hours -- I took a 3.5 hour break
+      const regex = new RegExp('(\\d*\\.?\\d)\\s*' + find, 'i'); // regex to match the break hours -- I took a 3.5 hour break
       const matches = body.match(regex);
       if (matches) {
         restTime = matches[1];
@@ -50,18 +50,28 @@ export default class CommandRestHours extends CommandAbstract {
       row.setOvertimeHours(TimesheetRow.overtimeHours(workedHours));
       this.timesheets.set(row);
       this.slack.send(this.template.render(
-          "restHours", username, date ? date.format('YYYY/MM/DD') : now.format('YYYY/MM/DD'), String(restTime)
+        "restHours",
+
+        username,
+        date ? date.format('YYYY/MM/DD') : now.format('YYYY/MM/DD'),
+        String(restTime)
       ));
       this.commandDayTotal.execute(username, date);
     }
     else if ((row.getSignIn() && row.getSignIn() !== '-') && (!row.getSignOut() || row.getSignOut() === '-')) {
       this.slack.send(this.template.render(
-          "signOutFirst", date ? date.format('YYYY/MM/DD') : now.format('YYYY/MM/DD')
+        "signOutFirst",
+
+        username,
+        date ? date.format('YYYY/MM/DD') : now.format('YYYY/MM/DD')
       ));
     }
     else {
       this.slack.send(this.template.render(
-          "signInFirst", date ? date.format('YYYY/MM/DD') : now.format('YYYY/MM/DD')
+        "signInFirst",
+
+        username,
+        date ? date.format('YYYY/MM/DD') : now.format('YYYY/MM/DD')
       ));
     }
   }

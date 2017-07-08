@@ -16,12 +16,18 @@ export default class CommandSignIn extends CommandAbstract {
       row.setRestTime("1");
       this.timesheets.set(row);
       this.slack.send(this.template.render(
-          "signIn", username, setterTime
+        "signIn",
+
+        username,
+        setterTime
       ));
     } else {
       if (!time) {
         this.slack.send(this.template.render(
-            "alreadySignedIn", date ? date.format('YYYY/MM/DD') : now.format('YYYY/MM/DD')
+          "alreadySignedIn",
+
+          username,
+          date ? date.format('YYYY/MM/DD') : now.format('YYYY/MM/DD')
         ));
         return;
       }
@@ -29,7 +35,10 @@ export default class CommandSignIn extends CommandAbstract {
 
       this.timesheets.set(row);
       this.slack.send(this.template.render(
-          "signInUpdate", username, (date ? date.format('YYYY/MM/DD ') : now.format('YYYY/MM/DD ')) + moment(time, "HH:mm").format('HH:mm')
+        "signInUpdate",
+
+        username,
+        (date ? date.format('YYYY/MM/DD ') : now.format('YYYY/MM/DD ')) + moment(time, "HH:mm").format('HH:mm')
       ));
     }
   }

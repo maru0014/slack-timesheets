@@ -13,12 +13,18 @@ export default class CommandChangeLocale extends CommandAbstract {
     if (this.template.localeExists(newLocale)) {
       config.set('Language', newLocale);
       this.slack.send(this.template.render(
-        "changeLocale", username, newLocale
+        "changeLocale",
+
+        username,
+        newLocale
       ));
     }
     else {
       this.slack.send(this.template.render(
-        "changeLocaleFailed", username, newLocale
+        "changeLocaleFailed",
+
+        username,
+        newLocale
       ));
     }
   }

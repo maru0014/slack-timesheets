@@ -18,8 +18,8 @@ export default class Kernel {
       if (spreadsheet) {
         this.configure = new GSConfigure(spreadsheet);
         this.slack = new Slack(
-            this.configure.get('Slack Incoming URL'),
-            this.configure.get('IgnoredUsers')
+          this.configure.get('Slack Incoming URL'),
+          this.configure.get('IgnoredUsers')
         );
         this.locale = this.configure.get("Language");
 

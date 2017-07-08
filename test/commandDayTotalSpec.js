@@ -39,7 +39,7 @@ describe('CommandDayTotalSpec', () => {
 
     const mockTimesheets = sinon.mock(timesheets).expects('get').withArgs(username, date).onCall(0).returns(row);
     sinon.mock(timesheets).expects('set').withArgs(row);
-    const mockTemplate = sinon.mock(template).expects('render').withArgs("signOutFirst", date.format('YYYY/MM/DD')).onCall(0).returns(expectMessage);
+    const mockTemplate = sinon.mock(template).expects('render').withArgs("signOutFirst", username, date.format('YYYY/MM/DD')).onCall(0).returns(expectMessage);
 
     const mockSlack = sinon.mock(slack).expects('send').once().withArgs(expectMessage);
 
@@ -97,8 +97,8 @@ describe('CommandDayTotalSpec', () => {
 
     const mockTimesheets = sinon.mock(timesheets).expects('get').withArgs(username, date).onCall(0).returns(row);
     sinon.mock(timesheets).expects('set').withArgs(row);
-    const signIn = row.getSignIn()? row.getSignIn() : "-";
-    const signOut = row.getSignOut()? row.getSignOut() : "-";
+    const signIn = row.getSignIn() ? row.getSignIn() : "-";
+    const signOut = row.getSignOut() ? row.getSignOut() : "-";
     const mockTemplate = sinon.mock(template).expects('render').withArgs(
       "dayTotal",
       username,

@@ -40,7 +40,10 @@ export default class CommandCancelShift extends CommandAbstract {
 
     this.timesheets.set(row);
     this.slack.send(this.template.render(
-      "cancelShift", username, date.format("YYYY/MM/DD")
+      "cancelShift",
+
+      username,
+      date.format("YYYY/MM/DD")
     ));
     this.commandDayTotal.execute(username, date, time, body, i18n);
   }

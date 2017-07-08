@@ -37,18 +37,27 @@ export default class CommandNoRest extends CommandAbstract {
       row.setOvertimeHours(TimesheetRow.overtimeHours(workedHours));
       this.timesheets.set(row);
       this.slack.send(this.template.render(
-          "noRest", username, date ? date.format('YYYY/MM/DD') : now.format('YYYY/MM/DD')
+        "noRest",
+
+        username,
+        date ? date.format('YYYY/MM/DD') : now.format('YYYY/MM/DD')
       ));
       this.commandDayTotal.execute(username, date);
     }
     else if ((row.getSignIn() && row.getSignIn() !== '-') && (!row.getSignOut() || row.getSignOut() === '-')) {
       this.slack.send(this.template.render(
-          "signOutFirst", date ? date.format('YYYY/MM/DD') : now.format('YYYY/MM/DD')
+        "signOutFirst",
+
+        username,
+        date ? date.format('YYYY/MM/DD') : now.format('YYYY/MM/DD')
       ));
     }
     else {
       this.slack.send(this.template.render(
-          "signInFirst", date ? date.format('YYYY/MM/DD') : now.format('YYYY/MM/DD')
+        "signInFirst",
+
+        username,
+        date ? date.format('YYYY/MM/DD') : now.format('YYYY/MM/DD')
       ));
     }
   }

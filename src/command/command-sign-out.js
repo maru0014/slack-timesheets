@@ -39,13 +39,19 @@ export default class CommandSignOut extends CommandAbstract {
         row.setLateHours(TimesheetRow.lateHours(moment(row.getSignIn(), "YYYY/MM/DD HH:mm").format("YYYY/MM/DD HH:mm"), setterTime));
         this.timesheets.set(row);
         this.slack.send(this.template.render(
-            "signOut", username, setterTime
+          "signOut",
+
+          username,
+          setterTime
         ));
         this.commandDayTotal.execute(username, date, time);
       } else {
         if (!time && row.getSignOut() !== '-') {
           this.slack.send(this.template.render(
-              "alreadySignedOut", date ? date.format('YYYY/MM/DD') : now.format('YYYY/MM/DD')
+            "alreadySignedOut",
+
+            username,
+            date ? date.format('YYYY/MM/DD') : now.format('YYYY/MM/DD')
           ));
           return;
         }
@@ -57,14 +63,20 @@ export default class CommandSignOut extends CommandAbstract {
         row.setLateHours(TimesheetRow.lateHours(moment(row.getSignIn(), "YYYY/MM/DD HH:mm").format("YYYY/MM/DD HH:mm"), setterTime));
         this.timesheets.set(row);
         this.slack.send(this.template.render(
-            "signOutUpdate", username, setterTime
+          "signOutUpdate",
+
+          username,
+          setterTime
         ));
         this.commandDayTotal.execute(username, date, time);
       }
     }
     else {
       this.slack.send(this.template.render(
-          "signInFirst", date ? date.format('YYYY/MM/DD') : now.format('YYYY/MM/DD')
+        "signInFirst",
+
+        username,
+        date ? date.format('YYYY/MM/DD') : now.format('YYYY/MM/DD')
       ));
     }
   }

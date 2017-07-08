@@ -110,7 +110,7 @@ export default class GSTimesheets {
     const rowNo = this._getRowNo(row.getUsername(), row.getDate());
 
     sheet.getRange("A" + rowNo + ":" + String.fromCharCode(65 + this.scheme.columns.length - 1) + rowNo)
-        .setValues([row.getRow().map((v) => v ? v : '')]);
+      .setValues([row.getRow().map((v) => v ? v : '')]);
 
     return this;
   }
