@@ -29,7 +29,7 @@ export default class CommandSignOut extends CommandAbstract {
   execute(username, date, time) {
     const now = moment();
     const row = this.timesheets.get(username, date ? date : now);
-    if (row.getSignIn()) {
+    if (row.getSignIn() && row.getSignIn() !== '-') {
       if (!row.getSignOut()) {
         const setterTime = time ? (date ? date.format('YYYY/MM/DD ') : now.format('YYYY/MM/DD ')) + moment(time, "HH:mm").format('HH:mm') : now.format('YYYY/MM/DD HH:mm');
         const workedHours = TimesheetRow.workedHours(row.getSignIn(), setterTime, row.getRestTime());
@@ -43,13 +43,13 @@ export default class CommandSignOut extends CommandAbstract {
         ));
         this.commandDayTotal.execute(username, date, time);
       } else {
-        if (!time) {
+        if (!time && row.getSignOut() !== '-') {
           this.slack.send(this.template.render(
               "alreadySignedOut", date ? date.format('YYYY/MM/DD') : now.format('YYYY/MM/DD')
           ));
           return;
         }
-        const setterTime = (date ? date.format('YYYY/MM/DD ') : now.format('YYYY/MM/DD ')) + moment(time, "HH:mm").format('HH:mm');
+        const setterTime = (date ? date.format('YYYY/MM/DD ') : now.format('YYYY/MM/DD ')) + (time ? moment(time, "HH:mm").format('HH:mm') : now.format('HH:mm'));
         const workedHours = TimesheetRow.workedHours(row.getSignIn(), setterTime, row.getRestTime());
         row.setSignOut(setterTime);
         row.setWorkedHours(workedHours <= 8 ? workedHours : "8");

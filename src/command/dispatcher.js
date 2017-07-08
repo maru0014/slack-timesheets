@@ -1,11 +1,12 @@
 import DateTime from '../date-time';
-import CommandHelp from './command-help';
-import CommandSignIn from './command-sign-in';
-import CommandSignOut from './command-sign-out';
+import CommandCancelShift from './command-cancel-shift';
 import CommandDayTotal from "./command-day-total";
+import CommandHelp from './command-help';
+import CommandMonthTotal from "./command-month-total";
 import CommandNoRest from "./command-no-rest";
 import CommandRestHours from "./command-rest-hours";
-import CommandMonthTotal from "./command-month-total";
+import CommandSignIn from './command-sign-in';
+import CommandSignOut from './command-sign-out';
 
 export default class Dispatcher {
 
@@ -16,13 +17,14 @@ export default class Dispatcher {
   dispatch(username, body) {
     const datetime = DateTime.parse(body, this.kernel.getI18n());
     const commands = [
-      CommandSignOut,
-      CommandSignIn,
+      CommandCancelShift,
       CommandDayTotal,
+      CommandHelp,
+      CommandMonthTotal,
       CommandNoRest,
       CommandRestHours,
-      CommandMonthTotal,
-      CommandHelp
+      CommandSignIn,
+      CommandSignOut
     ];
     commands.map((CommandClass) => {
       if (CommandClass.match(body, this.kernel.getI18n())) {
