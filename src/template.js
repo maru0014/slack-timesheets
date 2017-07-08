@@ -24,4 +24,8 @@ export default class Template {
     }
     return arguments.join(', ');
   }
+  localeExists(locale) {
+    const locales = this.strage.getLocales();
+    return locales.indexOf(locale) > -1;
+  }
 }

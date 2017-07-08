@@ -31,7 +31,7 @@ export default class TemplateStrageGs extends TemplateStrage {
     // create template labels (signIn, signOut,...)
     for (let i = keyRangeFirst; i <= keyRangeLast; i++) {
       sheet.getRange("A" + i).setValue(
-          templateObjLabels[i - 2]
+        templateObjLabels[i - 2]
       );
     }
 
@@ -45,7 +45,7 @@ export default class TemplateStrageGs extends TemplateStrage {
       for (let j = keyRangeFirst; j <= keyRangeLast; j++) {
         const label = sheet.getRange('A' + j).getValue();
         sheet.getRange(String.fromCharCode(i) + j).setValue(
-            templateWithLocale[label]
+          templateWithLocale[label]
         );
       }
     }
@@ -70,6 +70,16 @@ export default class TemplateStrageGs extends TemplateStrage {
       }
     }
     return null;
+  }
+
+  getLocales() {
+    const localesArray = [];
+
+    for (let i = 66; i <= 65 + localesSize; i++) {
+      const locale = this.sheet.getRange(String.fromCharCode(i) + "1").getValue();
+      localesArray.push(locale);
+    }
+    return localesArray;
   }
 
   // generate message from template
