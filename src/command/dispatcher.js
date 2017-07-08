@@ -7,6 +7,7 @@ import CommandNoRest from "./command-no-rest";
 import CommandRestHours from "./command-rest-hours";
 import CommandSignIn from './command-sign-in';
 import CommandSignOut from './command-sign-out';
+import CommandChangeLocale from './command-change-locale';
 
 export default class Dispatcher {
 
@@ -24,12 +25,21 @@ export default class Dispatcher {
       CommandNoRest,
       CommandRestHours,
       CommandSignIn,
-      CommandSignOut
+      CommandSignOut,
+      CommandChangeLocale
     ];
+    let command;
     commands.map((CommandClass) => {
       if (CommandClass.match(body, this.kernel.getI18n())) {
-        const command = new CommandClass(this.kernel.getSlack(), this.kernel.getTemplate(), this.kernel.getTimesheets());
-        command.execute(username, datetime.date, datetime.time, body, this.kernel.getI18n());
+        command = new CommandClass(this.kernel.getSlack(), this.kernel.getTemplate(), this.kernel.getTimesheets());
+
+        if (CommandClass == CommandChangeLocale) {
+          command.execute(username, datetime.date, datetime.time, body, this.kernel.getI18n(), this.kernel.getConfigure());
+        }
+
+        else {
+          command.execute(username, datetime.date, datetime.time, body, this.kernel.getI18n());
+        }
       }
     });
   }
